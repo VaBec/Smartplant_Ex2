@@ -1,4 +1,4 @@
-package com.example.morit.smartplant;
+package de.htwg.smartplant;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.morit.smartplant", appContext.getPackageName());
+        assertEquals("de.htwg.smartplant", appContext.getPackageName());
     }
 }

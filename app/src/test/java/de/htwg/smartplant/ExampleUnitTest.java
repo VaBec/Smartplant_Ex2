@@ -1,4 +1,4 @@
-package com.example.morit.smartplant;
+package de.htwg.smartplant;
 
 import org.junit.Test;
 
