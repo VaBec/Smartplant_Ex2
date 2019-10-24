@@ -1,15 +1,13 @@
 package de.htwg.smartplant.view.login;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.RotateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import de.htwg.smartplant.R;
@@ -20,6 +18,7 @@ public class LoginView extends AppCompatActivity implements LoginPresenter.ILogi
     private final LoginPresenter loginPresenter = new LoginPresenter(this);
 
     private Button loginButton;
+    private ProgressBar spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +29,10 @@ public class LoginView extends AppCompatActivity implements LoginPresenter.ILogi
         setContentView(R.layout.login);
 
         loginButton = findViewById(R.id.loginButton);
+        spinner = findViewById(R.id.spinner);
+
+        spinner.setVisibility(View.INVISIBLE);
+                
         EditText nameEditText = findViewById(R.id.nameText);
         EditText passwordEditText = findViewById(R.id.passwordText);
 
@@ -43,20 +46,22 @@ public class LoginView extends AppCompatActivity implements LoginPresenter.ILogi
         InputMethodManager imm = (InputMethodManager)
                 this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        imm.hideSoftInputFromWindow(findViewById(android.R.id.content), 0);
+        View view = findViewById(android.R.id.content);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override
     public void startButtonAnimation() {
-        //loginButton.setText("");
-        //loginButton.setAnimation(buttonAnimation);
-        loginButton.setVisibility(View.INVISIBLE);
-
+        loginButton.setText("");
+        loginButton.setEnabled(false);
+        spinner.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void showStandardButton() {
-        findViewById(R.id.loginButton).setEnabled(true);
+        loginButton.setText("Login");
+        loginButton.setEnabled(true);
+        spinner.setVisibility(View.INVISIBLE);
     }
 
     @Override

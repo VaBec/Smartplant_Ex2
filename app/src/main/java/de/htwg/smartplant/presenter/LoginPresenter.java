@@ -19,10 +19,14 @@ public class LoginPresenter implements HttpNotifier {
     }
 
     public void updateUser(String name, String password) {
-        userModel = new UserModel(name, password, this);
+        if(name.equals("") || password.equals("")) {
+            view.showToast("Enter username and password.", Toast.LENGTH_LONG);
+        } else {
+            userModel = new UserModel(name, password, this);
 
-        userModel.login();
-        view.updateToLoggedIn();
+            userModel.login();
+            view.updateToLoggedIn();
+        }
     }
 
     @Override
@@ -36,7 +40,7 @@ public class LoginPresenter implements HttpNotifier {
         String errorMessage = "HTTP Error.";
 
         if(retryCounter == 5) {
-            errorMessage = "Cant connect to '" + RequestHandler.BASE_URL + UserModel.LOGIN_ENDPOINT + "'.";
+            errorMessage = "Can't connect to '" + RequestHandler.BASE_URL + UserModel.LOGIN_ENDPOINT + "'.";
             retryCounter = 0;
         }
 
