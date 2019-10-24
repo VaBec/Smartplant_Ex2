@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/plant_background"
-    tools:context=".login.ILoginView">
+    tools:context=".view.login.ILoginView">
 
     <Button
         android:id="@+id/loginButton"

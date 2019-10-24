@@ -1,4 +1,4 @@
-package de.htwg.smartplant.login;
+package de.htwg.smartplant.model;
 
 import android.util.Log;
 

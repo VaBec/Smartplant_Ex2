@@ -1,4 +1,7 @@
-package de.htwg.smartplant.login;
+package de.htwg.smartplant.presenter;
+
+import de.htwg.smartplant.model.RESTModel;
+import de.htwg.smartplant.model.data.UserModel;
 
 public class LoginPresenter {
 

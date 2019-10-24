@@ -1,4 +1,4 @@
-package de.htwg.smartplant.login;
+package de.htwg.smartplant.view.login;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import de.htwg.smartplant.R;
+import de.htwg.smartplant.presenter.LoginPresenter;
 
 public class LoginView extends AppCompatActivity implements LoginPresenter.ILoginView {
 

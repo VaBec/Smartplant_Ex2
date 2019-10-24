@@ -1,4 +1,4 @@
-package de.htwg.smartplant.login;
+package de.htwg.smartplant.model;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;

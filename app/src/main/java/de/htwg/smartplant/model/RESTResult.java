@@ -1,4 +1,4 @@
-package de.htwg.smartplant.login;
+package de.htwg.smartplant.model;
 
 public class RESTResult {
 
