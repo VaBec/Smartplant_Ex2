@@ -1,4 +1,4 @@
-package de.htwg.smartplant.model.data;
+package de.htwg.smartplant.data;
 
 public class UserModel {
 

@@ -1,7 +1,6 @@
 package de.htwg.smartplant.presenter;
 
-import de.htwg.smartplant.model.RESTModel;
-import de.htwg.smartplant.model.data.UserModel;
+import de.htwg.smartplant.data.UserModel;
 
 public class LoginPresenter {
 
@@ -16,8 +15,6 @@ public class LoginPresenter {
     public void updateUser(String name, String password) {
         user.setName(name);
         user.setPassword(password);
-
-        new RESTModel().login(name, password);
 
         view.login();
     }
