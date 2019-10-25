@@ -3,47 +3,66 @@ package de.htwg.smartplant.login;
 import android.widget.Toast;
 
 import de.htwg.smartplant.rest.HttpNotifier;
-import de.htwg.smartplant.rest.RequestHandler;
 
 public class LoginPresenter implements HttpNotifier {
 
     private final ILoginView view;
     private UserModel userModel;
 
-    private int retryCounter = 0;
-
     public LoginPresenter(ILoginView view) {
         this.view = view;
     }
 
-    public void updateUser(String name, String password) {
+    public void register() {
+        view.showRegisterView();
+    }
+
+    public void login() {
+        view.showLoginView();
+    }
+
+    public void registerUser(String name, String password1, String password2) {
+        if(!password1.equals(password2)) {
+            view.showToast("Passwords do not match.", Toast.LENGTH_LONG);
+        } else {
+            userModel = new UserModel(name, password1, this);
+
+            userModel.sendRegisterRequest();
+            view.hideKeyboard();
+        }
+    }
+
+    public void loginUser(String name, String password) {
         if(name.equals("") || password.equals("")) {
             view.showToast("Enter username and password.", Toast.LENGTH_LONG);
         } else {
             userModel = new UserModel(name, password, this);
 
             userModel.sendLoginRequest();
-            view.updateToLoggedIn();
+            view.hideKeyboard();
         }
     }
 
     @Override
     public void showRetry() {
-        view.showToast("Can't login - trying again.", Toast.LENGTH_LONG);
-        retryCounter++;
+        String retryMessage = userModel.getRequestType().getRetryMessage();
+
+        view.showToast(retryMessage, Toast.LENGTH_LONG);
     }
 
     @Override
     public void showFailure() {
-        String errorMessage = "HTTP Error.";
-
-        if(retryCounter == 5) {
-            errorMessage = "Can't connect to '" + RequestHandler.BASE_URL + UserModel.LOGIN_ENDPOINT + "'.";
-            retryCounter = 0;
-        }
+        String errorMessage = userModel.getRequestType().getErrorMessage();
 
         view.showToast(errorMessage, Toast.LENGTH_LONG);
-        view.showStandardButton();
+
+        if(userModel.getRequestType() == UserModel.RequestType.LOGIN) {
+            view.showStandardLoginButton();
+            view.showLoginView();
+        } else if(userModel.getRequestType() == UserModel.RequestType.REGISTER) {
+            view.showStandardRegisterButton();
+            view.showRegisterView();
+        }
     }
 
     @Override
@@ -53,14 +72,28 @@ public class LoginPresenter implements HttpNotifier {
 
     @Override
     public void showStart() {
-        view.startButtonAnimation();
+        UserModel.RequestType requestType = userModel.getRequestType();
+
+        if(requestType == UserModel.RequestType.LOGIN) {
+            view.startLoggingIn();
+        } else if(requestType == UserModel.RequestType.REGISTER) {
+            view.startRegister();
+        }
     }
 
 
     public interface ILoginView{
-        void updateToLoggedIn();
-        void startButtonAnimation();
-        void showStandardButton();
+        void showLoginView();
+        void showRegisterView();
+
+        void hideKeyboard();
+
+        void startLoggingIn();
+        void startRegister();
+
+        void showStandardLoginButton();
+        void showStandardRegisterButton();
+
         void showToast(String text, int length);
     }
 }
