@@ -1,12 +1,15 @@
 package de.htwg.smartplant.rest;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
-public class RequestHandler extends AsyncHttpResponseHandler {
+public class RequestHandler extends JsonHttpResponseHandler {
 
-    public static final String BASE_URL = "https://localhost:5000/";
+    public static final String BASE_URL = "http://192.168.178.121:5080/";
     private final HttpNotifier notifier;
 
     public RequestHandler(HttpNotifier notifier) {
@@ -14,13 +17,13 @@ public class RequestHandler extends AsyncHttpResponseHandler {
     }
 
     @Override
-    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-        notifier.showSuccess();
+    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+        notifier.showSuccess(response);
     }
 
     @Override
-    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-        notifier.showFailure();
+    public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResponse) {
+        notifier.showFailure(errorResponse);
     }
 
     @Override

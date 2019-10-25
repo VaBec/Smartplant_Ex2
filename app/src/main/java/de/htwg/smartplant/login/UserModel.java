@@ -1,8 +1,18 @@
 package de.htwg.smartplant.login;
 
+import android.content.Context;
+
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+
+import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.protocol.HTTP;
 import de.htwg.smartplant.rest.RequestHandler;
 
 import static de.htwg.smartplant.rest.RequestHandler.BASE_URL;
@@ -49,36 +59,60 @@ public class UserModel {
 
     private final String password;
     private final String name;
+    private final Context context;
     private final LoginPresenter loginPresenter;
 
     private RequestType requestType = RequestType.NONE;
 
-    public UserModel(String name, String password, LoginPresenter loginPresenter) {
+    public UserModel(String name, String password, LoginPresenter loginPresenter, Context context) {
         this.name = name;
         this.password = password;
         this.loginPresenter = loginPresenter;
+        this.context = context;
     }
 
     public void sendLoginRequest() {
-        requestType = RequestType.LOGIN;
+        try {
+            requestType = RequestType.LOGIN;
 
-        RequestParams params = new RequestParams();
-        params.add("username", name);
-        params.add("password", password);
+            JSONObject userModel = new JSONObject();
 
-        client.setMaxRetriesAndTimeout(MAX_RETRIES, TIMEOUT);
-        client.get(BASE_URL + LOGIN_ENDPOINT, params , new RequestHandler(loginPresenter));
+            userModel.put("username", name);
+            userModel.put("password", password);
+
+            StringEntity entity = new StringEntity(userModel.toString());
+            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+
+            client.setMaxRetriesAndTimeout(MAX_RETRIES, TIMEOUT);
+
+            String url = BASE_URL + LOGIN_ENDPOINT;
+            client.post(context, url, entity,"application/json", new RequestHandler(loginPresenter));
+
+        } catch(Exception e) {
+            loginPresenter.showException(e);
+        }
     }
 
     public void sendRegisterRequest() {
-        requestType = RequestType.REGISTER;
+        try {
+            requestType = RequestType.REGISTER;
 
-        RequestParams params = new RequestParams();
-        params.add("username", name);
-        params.add("password", password);
+            JSONObject userModel = new JSONObject();
 
-        client.setMaxRetriesAndTimeout(MAX_RETRIES, TIMEOUT);
-        client.get(BASE_URL + REGISTER_ENDPOINT, params , new RequestHandler(loginPresenter));
+            userModel.put("username", name);
+            userModel.put("password", password);
+
+            StringEntity entity = new StringEntity(userModel.toString());
+            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+
+            client.setMaxRetriesAndTimeout(MAX_RETRIES, TIMEOUT);
+
+            String url = BASE_URL + REGISTER_ENDPOINT;
+            client.post(context, url, entity,"application/json", new RequestHandler(loginPresenter));
+
+        } catch(Exception e) {
+            loginPresenter.showException(e);
+        }
     }
 
     public RequestType getRequestType() {

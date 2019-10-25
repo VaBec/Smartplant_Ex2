@@ -1,10 +1,12 @@
 package de.htwg.smartplant.rest;
 
+import org.json.JSONObject;
+
 public interface HttpNotifier {
 
     void showRetry();
-    void showFailure();
-    void showSuccess();
+    void showFailure(JSONObject response);
+    void showSuccess(JSONObject response);
     void showStart();
 
 }

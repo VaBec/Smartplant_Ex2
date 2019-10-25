@@ -3,6 +3,7 @@ package de.htwg.smartplant.login;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -15,7 +16,7 @@ import de.htwg.smartplant.R;
 
 public class LoginView extends AppCompatActivity implements LoginPresenter.ILoginView {
 
-    private final LoginPresenter loginPresenter = new LoginPresenter(this);
+    private LoginPresenter loginPresenter;
 
     private Button loginButton;
     private Button registerButton;
@@ -45,6 +46,7 @@ public class LoginView extends AppCompatActivity implements LoginPresenter.ILogi
         initGuiFields();
         setUpLoginGui();
         setListeners();
+        loginPresenter = new LoginPresenter(this, this.getApplicationContext());
     }
 
     private void setListeners() {
@@ -90,6 +92,14 @@ public class LoginView extends AppCompatActivity implements LoginPresenter.ILogi
     }
 
     @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        // Hide keyboard on any touch on the activity for better ux
+        hideKeyboard();
+
+        return true;
+    }
+
+        @Override
     public void showLoginView() {
         registerPassword1.setVisibility(View.INVISIBLE);
         registerPassword2.setVisibility(View.INVISIBLE);
