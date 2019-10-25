@@ -1,4 +1,4 @@
-package de.htwg.smartplant.view.login;
+package de.htwg.smartplant.login;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,7 +11,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import de.htwg.smartplant.R;
-import de.htwg.smartplant.presenter.LoginPresenter;
 
 public class LoginView extends AppCompatActivity implements LoginPresenter.ILoginView {
 

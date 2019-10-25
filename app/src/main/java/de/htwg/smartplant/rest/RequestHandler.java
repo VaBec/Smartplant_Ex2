@@ -3,7 +3,6 @@ package de.htwg.smartplant.rest;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import cz.msebera.android.httpclient.Header;
-import de.htwg.smartplant.interfaces.HttpNotifier;
 
 public class RequestHandler extends AsyncHttpResponseHandler {
 

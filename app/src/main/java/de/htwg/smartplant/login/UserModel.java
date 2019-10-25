@@ -1,16 +1,16 @@
-package de.htwg.smartplant.data;
+package de.htwg.smartplant.login;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
 
-import de.htwg.smartplant.presenter.LoginPresenter;
+import de.htwg.smartplant.login.LoginPresenter;
 import de.htwg.smartplant.rest.RequestHandler;
 
 import static de.htwg.smartplant.rest.RequestHandler.BASE_URL;
 
 public class UserModel {
 
-    public static String LOGIN_ENDPOINT = "getplant";
+    public static String LOGIN_ENDPOINT = "login";
 
     private final String password;
     private final String name;
@@ -22,11 +22,12 @@ public class UserModel {
         this.loginPresenter = loginPresenter;
     }
 
-    public void login() {
+    public void sendLoginRequest() {
         RequestParams params = new RequestParams();
-        params.add("id", "2");
+        params.add("username", name);
+        params.add("password", password);
 
         AsyncHttpClient client = new AsyncHttpClient();
-        client.get(BASE_URL + "getplant", params , new RequestHandler(loginPresenter));
+        client.get(BASE_URL + LOGIN_ENDPOINT, params , new RequestHandler(loginPresenter));
     }
 }

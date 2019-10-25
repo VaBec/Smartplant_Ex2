@@ -1,10 +1,8 @@
-package de.htwg.smartplant.presenter;
+package de.htwg.smartplant.login;
 
-import android.util.Log;
 import android.widget.Toast;
 
-import de.htwg.smartplant.data.UserModel;
-import de.htwg.smartplant.interfaces.HttpNotifier;
+import de.htwg.smartplant.rest.HttpNotifier;
 import de.htwg.smartplant.rest.RequestHandler;
 
 public class LoginPresenter implements HttpNotifier {
@@ -24,7 +22,7 @@ public class LoginPresenter implements HttpNotifier {
         } else {
             userModel = new UserModel(name, password, this);
 
-            userModel.login();
+            userModel.sendLoginRequest();
             view.updateToLoggedIn();
         }
     }
@@ -60,7 +58,6 @@ public class LoginPresenter implements HttpNotifier {
 
 
     public interface ILoginView{
-
         void updateToLoggedIn();
         void startButtonAnimation();
         void showStandardButton();

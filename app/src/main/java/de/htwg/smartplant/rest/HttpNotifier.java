@@ -1,4 +1,4 @@
-package de.htwg.smartplant.interfaces;
+package de.htwg.smartplant.rest;
 
 public interface HttpNotifier {
 
