@@ -6,7 +6,8 @@ Smartplant ist eine Android-Applikation zur Überwachung von Feuchtigkeitsständ
 Die Kommunikation findet über eine ASP.Net Core Rest-Api statt. Als Datenbank wird MongoDb genutzt, eine dokumentenbasierte Datenbank.
 
 ## Projekt Struktur
-Da das Projekt für Android entwickelt wird, bietet sich als Architektur das Model-View-Presenter Pattern an, welches auch umgesetzt wird. ![alt text](https://github.com/VaBec/SmartPlant_Ex1/blob/master/Architektur.png)  
+Da das Projekt für Android entwickelt wird, bietet sich als Architektur das Model-View-Presenter Pattern an, welches auch umgesetzt wird.  
+![alt text](https://github.com/VaBec/SmartPlant_Ex1/blob/master/Architektur.png)  
 Eine rudimentäre grafische Darstellung der Architektur.
 
 ## Branching Strategy 
