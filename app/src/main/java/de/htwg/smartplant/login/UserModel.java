@@ -57,6 +57,7 @@ public class UserModel {
     private final int TIMEOUT = 5000;
     private final int MAX_RETRIES = 1;
 
+    private final Long id = 0L;
     private final String password;
     private final String name;
     private final Context context;
@@ -118,4 +119,6 @@ public class UserModel {
     public RequestType getRequestType() {
         return requestType;
     }
+    public String getName(){return name;}
+    public Long getID() {return this.id;}
 }
