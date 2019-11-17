@@ -47,7 +47,6 @@ public class LoginPresenter implements HttpNotifier {
 
             userModel.sendLoginRequest();
             view.hideKeyboard();
-
         }
     }
 
