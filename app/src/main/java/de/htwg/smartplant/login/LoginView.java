@@ -1,6 +1,7 @@
 package de.htwg.smartplant.login;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import de.htwg.smartplant.R;
+import de.htwg.smartplant.main.MainActivity;
 
 public class LoginView extends AppCompatActivity implements LoginPresenter.ILoginView {
 
@@ -97,6 +99,13 @@ public class LoginView extends AppCompatActivity implements LoginPresenter.ILogi
         hideKeyboard();
 
         return true;
+    }
+
+    @Override
+    public void startMainActivity(String name) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("userID", name);
+        startActivity(intent);
     }
 
         @Override
