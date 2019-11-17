@@ -108,7 +108,7 @@ public class UserModel {
             client.setMaxRetriesAndTimeout(MAX_RETRIES, TIMEOUT);
 
             String url = BASE_URL + REGISTER_ENDPOINT;
-            client.post(context, url, entity,"application/json", new RequestHandler(loginPresenter));
+            client.put(context, url, entity,"application/json", new RequestHandler(loginPresenter));
 
         } catch(Exception e) {
             loginPresenter.showException(e);
