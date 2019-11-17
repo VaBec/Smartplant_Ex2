@@ -1,6 +1,5 @@
 package de.htwg.smartplant.rest;
 
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
@@ -9,7 +8,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class RequestHandler extends JsonHttpResponseHandler {
 
-    public static final String BASE_URL = "http://192.168.178.121:5080/";
+    public static final String BASE_URL = "http://smartplant.azurewebsites.net/";
     private final HttpNotifier notifier;
 
     public RequestHandler(HttpNotifier notifier) {
