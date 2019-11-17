@@ -1,10 +1,12 @@
 package de.htwg.smartplant.login;
 
 import android.content.Context;
+import android.content.Intent;
 import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import de.htwg.smartplant.main.MainActivity;
 import de.htwg.smartplant.rest.HttpNotifier;
 
 public class LoginPresenter implements HttpNotifier {
@@ -80,6 +82,7 @@ public class LoginPresenter implements HttpNotifier {
             view.showRegisterView();
             view.showStandardRegisterButton();
         }
+
     }
 
     @Override
@@ -90,10 +93,14 @@ public class LoginPresenter implements HttpNotifier {
 
             if(userModel.getRequestType() == UserModel.RequestType.REGISTER) {
                 view.showStandardRegisterButton();
+                view.showLoginView();
+                view.showStandardLoginButton();
+            }
+            else
+            {
+                view.startMainActivity(userModel.getName());
             }
 
-            view.showLoginView();
-            view.showStandardLoginButton();
         } catch(Exception e){
             showException(e);
         }
@@ -124,5 +131,7 @@ public class LoginPresenter implements HttpNotifier {
         void showStandardRegisterButton();
 
         void showToast(String text, int length);
+
+        void startMainActivity(String userName);
     }
 }
