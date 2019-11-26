@@ -1,7 +1,6 @@
 package de.htwg.smartplant.main;
 
 import android.content.Context;
-import android.view.View;
 
 import org.json.JSONObject;
 
@@ -11,15 +10,23 @@ import de.htwg.smartplant.rest.HttpNotifier;
 
 public class MainPresenter implements HttpNotifier {
 
-    private IMainView view;
+    private IMainActivity view;
     private Context context;
+    private String user;
+    private PlantModel plantModel;
 
-    public MainPresenter(IMainView view, Context context)
+
+    public MainPresenter(IMainActivity view, Context context, String user)
     {
+        this.user = user;
         this.view = view;
         this.context = context;
+        plantModel = new PlantModel(this, user);
     }
 
+    public List<String> getPlants(){
+        return plantModel.getUserPlants(user);
+    }
 
     @Override
     public void showRetry() {
@@ -41,8 +48,20 @@ public class MainPresenter implements HttpNotifier {
 
     }
 
-    public interface IMainView {
+    public interface IMainActivity{
         void setupTabs();
-        List<PlantModel> getAllPlants();
+        List<String> getPlants();
+    }
+
+    public interface IPlantsView {
+
+    }
+
+    public interface IUserView {
+
+    }
+
+    public interface IAnalyzerView{
+
     }
 }

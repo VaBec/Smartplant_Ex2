@@ -2,16 +2,17 @@ package de.htwg.smartplant.main.recycler;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
 
-import de.htwg.smartplant.main.PlantModel;
+import de.htwg.smartplant.R;
 
 public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsViewHolder> {
 
-    private List<PlantModel> plants;
+    private List<String> plants;
 
     public static class PlantsViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
@@ -22,23 +23,28 @@ public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsView
         }
     }
 
-    public PlantsAdapter(List<PlantModel> dataSet) {
+    public PlantsAdapter(List<String> dataSet) {
         this.plants = dataSet;
     }
 
     @NonNull
     @Override
-    public PlantsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        return null;
+    public PlantsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // create a new view
+        TextView v = (TextView) LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.plant_row, parent, false);
+
+        PlantsViewHolder vh = new PlantsViewHolder(v);
+        return vh;
     }
 
     @Override
     public void onBindViewHolder(@NonNull PlantsViewHolder plantsViewHolder, int i) {
-
+        plantsViewHolder.textView.setText(plants.get(i));
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return plants.size();
     }
 }
