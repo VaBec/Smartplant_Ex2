@@ -7,9 +7,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.htwg.smartplant.R;
 import de.htwg.smartplant.main.fragments.AnalyseFragment;
@@ -64,5 +67,23 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
     public void showToast(String text, int toastLength) {
         Toast toast = Toast.makeText(getApplicationContext(), text, toastLength);
         toast.show();
+    }
+
+    @Override
+    public void updatePlantsData(JSONArray plants) {
+        PlantsFragment plantsFragment = (PlantsFragment) tabsPagerAdapter.getItem(0);
+        plantsFragment.addPlantsData(extractIDs(plants));
+    }
+
+    private List<String> extractIDs(JSONArray array) {
+        List<String> result = new ArrayList<String>();
+        try {
+        for (int i = 0; i < array.length(); i++) {
+                result.add(array.getJSONObject(i).getString("id") + "");
+        }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        return result;
     }
 }

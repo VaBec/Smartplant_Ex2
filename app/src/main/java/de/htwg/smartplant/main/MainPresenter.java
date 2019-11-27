@@ -45,8 +45,7 @@ public class MainPresenter implements HttpNotifier {
     public void showSuccess(JSONObject response) {
         try {
             JSONArray plants = (JSONArray) response.get("payload");
-            JSONObject first = plants.getJSONObject(0);
-
+            view.updatePlantsData(plants);
             view.showToast(plants.length() + "", Toast.LENGTH_LONG);
         } catch(Exception e){
             showException(e);
@@ -66,6 +65,7 @@ public class MainPresenter implements HttpNotifier {
         void setupTabs();
         void getPlants() throws UnsupportedEncodingException, JSONException;
         void showToast(String message, int lengthLong);
+        void updatePlantsData(JSONArray data);
     }
 
     public interface IPlantsView {

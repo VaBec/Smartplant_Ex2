@@ -5,9 +5,6 @@ import android.content.Context;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
 
-import org.json.JSONException;
-
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,14 +37,8 @@ public class PlantModel {
         this.context = context;
     }
 
-    public void getUserPlants(String user) throws JSONException, UnsupportedEncodingException {
+    public void getUserPlants(String user){
         try {
-//            JSONObject plantsModel = new JSONObject();
-//            plantsModel.put("userName", user);
-//
-//            StringEntity entity = new StringEntity(plantsModel.toString());
-//            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-
             Map<String,String> params = new HashMap<>();
             params.put("userName", user);
             RequestParams reqParams = new RequestParams(params);
