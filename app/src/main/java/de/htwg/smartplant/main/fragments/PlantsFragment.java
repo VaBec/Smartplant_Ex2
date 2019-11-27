@@ -49,6 +49,7 @@ private List<Object> data;
     public void addPlantsData(List<String> plants) {
         plantsAdapter = new PlantsAdapter(plants);
         recyclerView.setAdapter(plantsAdapter);
+        plantsAdapter.notifyDataSetChanged();
     }
 
 //    private Object getPlants() throws UnsupportedEncodingException, JSONException {
