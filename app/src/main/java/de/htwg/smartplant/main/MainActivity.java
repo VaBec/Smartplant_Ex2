@@ -5,8 +5,11 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
-import java.util.List;
+import org.json.JSONException;
+
+import java.io.UnsupportedEncodingException;
 
 import de.htwg.smartplant.R;
 import de.htwg.smartplant.main.fragments.AnalyseFragment;
@@ -37,18 +40,29 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
         viewPager = findViewById(R.id.view_pager);
         tabsPagerAdapter = new TabsPagerAdapter(getSupportFragmentManager());
 
-        //Add Fragments
-        tabsPagerAdapter.AddFragment(new PlantsFragment(), getString(R.string.tab_text_1) );
-        tabsPagerAdapter.AddFragment(new AnalyseFragment(), getString(R.string.tab_text_2));
-        tabsPagerAdapter.AddFragment(new UserFragment(), getString(R.string.tab_text_3));
+        try {
+            getPlants();
+            tabsPagerAdapter.AddFragment(new PlantsFragment(), getString(R.string.tab_text_1) );
+            tabsPagerAdapter.AddFragment(new AnalyseFragment(), getString(R.string.tab_text_2));
+            tabsPagerAdapter.AddFragment(new UserFragment(), getString(R.string.tab_text_3));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         viewPager.setAdapter(tabsPagerAdapter);
         tablayout.setupWithViewPager(viewPager);
     }
 
     @Override
-    public List<String> getPlants() {
-        return mainPresenter.getPlants();
+    public void getPlants() throws UnsupportedEncodingException, JSONException {
+        mainPresenter.getPlants();
     }
 
+    @Override
+    public void showToast(String text, int toastLength) {
+        Toast toast = Toast.makeText(getApplicationContext(), text, toastLength);
+        toast.show();
+    }
 }

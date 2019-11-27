@@ -1,7 +1,20 @@
 package de.htwg.smartplant.main;
 
-import java.util.Arrays;
-import java.util.List;
+import android.content.Context;
+
+import com.loopj.android.http.AsyncHttpClient;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+
+import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.protocol.HTTP;
+import de.htwg.smartplant.rest.RequestHandler;
+
+import static de.htwg.smartplant.rest.RequestHandler.BASE_URL;
 
 public class PlantModel {
 
@@ -15,17 +28,33 @@ public class PlantModel {
     private MainPresenter presenter;
     private String user;
 
-    public PlantModel(MainPresenter presenter, String username)
-    {
+    public static String PLANTS_ENDPOINT = "plantsfromuser";
+
+    private final AsyncHttpClient client = new AsyncHttpClient();
+    private final int TIMEOUT = 5000;
+    private final int MAX_RETRIES = 1;
+
+    private final Context context;
+    public PlantModel(MainPresenter presenter, String username, Context context) {
         this.presenter = presenter;
         this.user = username;
+        this.context = context;
     }
 
+    public void getUserPlants(String user) throws JSONException, UnsupportedEncodingException {
+        try {
+            JSONObject plantsModel = new JSONObject();
+            plantsModel.put("userName", user);
 
-    public List<String> getUserPlants(String user){
+            StringEntity entity = new StringEntity(plantsModel.toString());
+            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
 
-        //Send Request
-
-        return Arrays.asList("Plant 1", "Plant 2");
+            client.setMaxRetriesAndTimeout(MAX_RETRIES, TIMEOUT);
+            String url = BASE_URL + PLANTS_ENDPOINT;
+            client.get(context, url, entity, "application/json", new RequestHandler(presenter));
+        }
+        catch(Exception e) {
+            presenter.showException(e);
+        }
     }
 }

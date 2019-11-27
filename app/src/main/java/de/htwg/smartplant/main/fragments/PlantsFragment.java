@@ -9,10 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.json.JSONException;
+
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import de.htwg.smartplant.R;
-import de.htwg.smartplant.main.MainActivity;
 import de.htwg.smartplant.main.MainPresenter;
 import de.htwg.smartplant.main.recycler.PlantsAdapter;
 
@@ -23,8 +25,9 @@ public class PlantsFragment extends Fragment implements MainPresenter.IPlantsVie
 
 private View view;
 private RecyclerView recyclerView;
-
-    public PlantsFragment() {
+PlantsAdapter plantsAdapter;
+private List<Object> data;
+    public PlantsFragment() throws UnsupportedEncodingException, JSONException {
         // Required empty public constructor
     }
 
@@ -41,16 +44,28 @@ private RecyclerView recyclerView;
         recyclerView = (RecyclerView)view.findViewById(R.id.recycler_plants);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        PlantsAdapter plantsAdapter = new PlantsAdapter(loadPlants());
+    }
+
+    public void addPlantsData(List<String> plants) {
+        plantsAdapter = new PlantsAdapter(plants);
         recyclerView.setAdapter(plantsAdapter);
     }
 
-    private List<String> loadPlants(){
-        List<String> plants = null;
-        MainPresenter.IMainActivity mainActivity = (MainActivity) getActivity();
-        if (mainActivity != null) {
-                plants = mainActivity.getPlants();
-        }
-        return plants;
-    }
+//    private Object getPlants() throws UnsupportedEncodingException, JSONException {
+//        MainActivity activity = (MainActivity) getActivity();
+//        return activity.getPlants();
+//    }
+
+//    private void loadPlants() throws UnsupportedEncodingException, JSONException {
+//        List<String> plants = null;
+//        MainPresenter.IMainActivity mainActivity = (MainActivity) getActivity();
+//        if (mainActivity != null) {
+//                mainActivity.getPlants();
+//        }
+//    }
+//
+//    private void refreshAdapter() {
+//        plantsAdapter.updateData(data);
+//        plantsAdapter.notifyDataSetChanged();
+//    }
 }

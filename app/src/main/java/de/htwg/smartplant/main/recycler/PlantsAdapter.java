@@ -6,13 +6,14 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Arrays;
 import java.util.List;
 
 import de.htwg.smartplant.R;
 
 public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsViewHolder> {
 
-    private List<String> plants;
+    private List<String> plants = Arrays.asList();
 
     public static class PlantsViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
@@ -25,6 +26,10 @@ public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsView
 
     public PlantsAdapter(List<String> dataSet) {
         this.plants = dataSet;
+    }
+
+    public void updateData(List<String> data) {
+        this.plants = data;
     }
 
     @NonNull
@@ -40,7 +45,7 @@ public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsView
 
     @Override
     public void onBindViewHolder(@NonNull PlantsViewHolder plantsViewHolder, int i) {
-        plantsViewHolder.textView.setText(plants.get(i));
+        plantsViewHolder.textView.setText(plants.get(i).toString());
     }
 
     @Override

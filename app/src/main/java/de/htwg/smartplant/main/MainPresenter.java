@@ -1,10 +1,13 @@
 package de.htwg.smartplant.main;
 
 import android.content.Context;
+import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
+import java.io.UnsupportedEncodingException;
 
 import de.htwg.smartplant.rest.HttpNotifier;
 
@@ -21,11 +24,11 @@ public class MainPresenter implements HttpNotifier {
         this.user = user;
         this.view = view;
         this.context = context;
-        plantModel = new PlantModel(this, user);
+        plantModel = new PlantModel(this, user, context);
     }
 
-    public List<String> getPlants(){
-        return plantModel.getUserPlants(user);
+    public void getPlants() throws UnsupportedEncodingException, JSONException {
+        plantModel.getUserPlants(user);
     }
 
     @Override
@@ -40,7 +43,14 @@ public class MainPresenter implements HttpNotifier {
 
     @Override
     public void showSuccess(JSONObject response) {
+        try {
+            JSONArray plants = (JSONArray) response.get("payload");
+            JSONObject first = plants.getJSONObject(0);
 
+            view.showToast(plants.length() + "", Toast.LENGTH_LONG);
+        } catch(Exception e){
+            showException(e);
+        }
     }
 
     @Override
@@ -48,9 +58,14 @@ public class MainPresenter implements HttpNotifier {
 
     }
 
+    public void showException(Exception e) {
+        view.showToast(e.getMessage(), Toast.LENGTH_LONG);
+    }
+
     public interface IMainActivity{
         void setupTabs();
-        List<String> getPlants();
+        void getPlants() throws UnsupportedEncodingException, JSONException;
+        void showToast(String message, int lengthLong);
     }
 
     public interface IPlantsView {
