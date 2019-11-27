@@ -3,15 +3,14 @@ package de.htwg.smartplant.main;
 import android.content.Context;
 
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
-import cz.msebera.android.httpclient.entity.StringEntity;
-import cz.msebera.android.httpclient.message.BasicHeader;
-import cz.msebera.android.httpclient.protocol.HTTP;
 import de.htwg.smartplant.rest.RequestHandler;
 
 import static de.htwg.smartplant.rest.RequestHandler.BASE_URL;
@@ -43,15 +42,22 @@ public class PlantModel {
 
     public void getUserPlants(String user) throws JSONException, UnsupportedEncodingException {
         try {
-            JSONObject plantsModel = new JSONObject();
-            plantsModel.put("userName", user);
+//            JSONObject plantsModel = new JSONObject();
+//            plantsModel.put("userName", user);
+//
+//            StringEntity entity = new StringEntity(plantsModel.toString());
+//            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
 
-            StringEntity entity = new StringEntity(plantsModel.toString());
-            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            Map<String,String> params = new HashMap<>();
+            params.put("userName", user);
+            RequestParams reqParams = new RequestParams(params);
 
             client.setMaxRetriesAndTimeout(MAX_RETRIES, TIMEOUT);
+            client.addHeader("accept:", "application/json");
+
             String url = BASE_URL + PLANTS_ENDPOINT;
-            client.get(context, url, entity, "application/json", new RequestHandler(presenter));
+
+            client.get(context, url, reqParams, new RequestHandler(presenter));
         }
         catch(Exception e) {
             presenter.showException(e);
