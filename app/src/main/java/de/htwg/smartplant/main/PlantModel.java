@@ -71,7 +71,7 @@ public class PlantModel {
                                 for (CachedRequest req : requestCache.getRequests()) {
                                     client.get(context, req.getUrl(), new RequestParams(req.getRequestParams()), new RequestHandler(presenter));
                                 }
-                                currentThread().interrupt();
+                                done = true;
                             } else {
                                 //Wait 10 Seconds
                                 try {
@@ -81,6 +81,7 @@ public class PlantModel {
                                 }
                             }
                         }
+                        currentThread().interrupt();
                     }
                 };
                 if (!thread.isAlive()) {thread.start();}
