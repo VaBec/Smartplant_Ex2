@@ -1,12 +1,10 @@
 package de.htwg.smartplant.login;
 
 import android.content.Context;
-import android.content.Intent;
 import android.widget.Toast;
 
 import org.json.JSONObject;
 
-import de.htwg.smartplant.main.MainActivity;
 import de.htwg.smartplant.rest.HttpNotifier;
 
 public class LoginPresenter implements HttpNotifier {
