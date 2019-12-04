@@ -3,7 +3,9 @@ package de.htwg.smartplant.main.recycler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Arrays;
@@ -18,9 +20,15 @@ public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsView
     public static class PlantsViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView textView;
-        public PlantsViewHolder(TextView v) {
+        public View view;
+        public ImageView imageView;
+        public PlantsViewHolder(View v) {
             super(v);
-            textView = v;
+            //textView = v;
+            //view = v;
+            view = v ;
+            textView=view.findViewById(R.id.plant_row_text);
+            imageView = view.findViewById(R.id.plant_row_image);
         }
     }
 
@@ -36,16 +44,16 @@ public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsView
     @Override
     public PlantsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // create a new view
-        TextView v = (TextView) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.plant_row, parent, false);
-
+        View v = LayoutInflater.from(parent.getContext())
+        .inflate(R.layout.plant_row, parent, false);
         PlantsViewHolder vh = new PlantsViewHolder(v);
         return vh;
     }
 
     @Override
     public void onBindViewHolder(@NonNull PlantsViewHolder plantsViewHolder, int i) {
-        plantsViewHolder.textView.setText(plants.get(i).toString());
+        plantsViewHolder.textView.setText(plants.get(i));
+        plantsViewHolder.imageView.setImageResource(R.drawable.plant);
     }
 
     @Override

@@ -9,9 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.json.JSONException;
-
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import de.htwg.smartplant.R;
@@ -27,7 +24,7 @@ private View view;
 private RecyclerView recyclerView;
 PlantsAdapter plantsAdapter;
 private List<Object> data;
-    public PlantsFragment() throws UnsupportedEncodingException, JSONException {
+    public PlantsFragment(){
         // Required empty public constructor
     }
 
@@ -51,22 +48,4 @@ private List<Object> data;
         recyclerView.setAdapter(plantsAdapter);
         plantsAdapter.notifyDataSetChanged();
     }
-
-//    private Object getPlants() throws UnsupportedEncodingException, JSONException {
-//        MainActivity activity = (MainActivity) getActivity();
-//        return activity.getPlants();
-//    }
-
-//    private void loadPlants() throws UnsupportedEncodingException, JSONException {
-//        List<String> plants = null;
-//        MainPresenter.IMainActivity mainActivity = (MainActivity) getActivity();
-//        if (mainActivity != null) {
-//                mainActivity.getPlants();
-//        }
-//    }
-//
-//    private void refreshAdapter() {
-//        plantsAdapter.updateData(data);
-//        plantsAdapter.notifyDataSetChanged();
-//    }
 }
