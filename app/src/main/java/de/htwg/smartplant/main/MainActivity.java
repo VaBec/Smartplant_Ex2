@@ -17,7 +17,6 @@ import java.util.List;
 import de.htwg.smartplant.R;
 import de.htwg.smartplant.main.fragments.AnalyseFragment;
 import de.htwg.smartplant.main.fragments.PlantsFragment;
-import de.htwg.smartplant.main.fragments.UserFragment;
 
 public class MainActivity extends AppCompatActivity implements MainPresenter.IMainActivity {
 
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
             getPlants();
             tabsPagerAdapter.AddFragment(new PlantsFragment(), getString(R.string.tab_text_1) );
             tabsPagerAdapter.AddFragment(new AnalyseFragment(), getString(R.string.tab_text_2));
-            tabsPagerAdapter.AddFragment(new UserFragment(), getString(R.string.tab_text_3));
+            //tabsPagerAdapter.AddFragment(new UserFragment(), getString(R.string.tab_text_3));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (JSONException e) {

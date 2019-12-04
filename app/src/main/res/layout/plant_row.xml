@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/plant_row"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="100dp">
 
-</TextView>
+    <ImageView
+        android:id="@+id/plant_row_image"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/app_name" />
+
+    <TextView
+        android:id="@+id/plant_row_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/app_name"
+        ></TextView>
+</LinearLayout>
