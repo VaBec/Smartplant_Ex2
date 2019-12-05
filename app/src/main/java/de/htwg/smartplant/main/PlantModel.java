@@ -43,6 +43,23 @@ public class PlantModel {
         requestCache = new RequestCacheQueue();
     }
 
+    public void deleteUserPlant(String userName, String password, Long id) {
+        Map<String,String> params = new HashMap<>();
+        Map<String,String> headers = new HashMap<>();
+        params.put("id", id.toString());
+        params.put("username", userName);
+        params.put("password", password);
+        headers.put("accept:", "application/json");
+        Map.Entry<String,String> header = headers.entrySet().iterator().next();
+        RequestParams reqParams = new RequestParams(params);
+
+        client.setMaxRetriesAndTimeout(MAX_RETRIES, TIMEOUT);
+        client.addHeader(header.getKey(), header.getValue());
+
+        String url = BASE_URL + PLANTS_ENDPOINT;
+        client.delete(url, reqParams, new RequestHandler(presenter));
+    }
+
     public void getUserPlants(String user){
         try {
             Map<String,String> params = new HashMap<>();
