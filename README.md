@@ -1,4 +1,4 @@
-# SmartPlant_Ex1
+# SmartPlant_Ex2
 Team: Moritz Schmidt (MSI-SE, 299562), Valentin Beck (MSI-SE, 294463)
 
 ## Beschreibung
@@ -12,7 +12,12 @@ Da das Projekt für Android entwickelt wird, bietet sich als Architektur das Mod
 
 ## Sequenzdiagramm der Applikation
 
+Das folgende Sequenzdiagramm beschreibt grundlegende Use-Cases im Umgang mit der Smartplant-App:
+
 ![alt text](Sequenzdiagramm_Smartplant.png)
+
+## Offline Handling
+Plant GET-Request werden in einem Request Cache gespeichert falls keine Netzwerkverbindung besteht. Dieser wird zukünftig durch eine Realm Lösung mit einer mobilen Datenbank ersetzt.
 
 ## Branching Strategy 
 Als Branching-Strategie werden Feature-Branches genutzt. Jedes Feature wird in einem eigenen Branch entwickelt und getestet. Der Master spiegelt zu jedem Zeitpunkt den aktuell getesteten Funktionsstand wieder.
