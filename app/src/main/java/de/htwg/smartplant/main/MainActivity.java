@@ -1,10 +1,15 @@
 package de.htwg.smartplant.main;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -15,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.htwg.smartplant.R;
+import de.htwg.smartplant.login.LoginView;
 import de.htwg.smartplant.main.fragments.AnalyseFragment;
 import de.htwg.smartplant.main.fragments.PlantsFragment;
 
@@ -26,6 +32,22 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
     private MainPresenter mainPresenter;
 
     @Override
+    public void onBackPressed() {
+        // Nichts tun
+        new AlertDialog.Builder(this)
+                .setTitle("Logout")
+                .setMessage("Wollen Sie sich sicher ausloggen?")
+                .setPositiveButton("Ja", (dialog, which) -> {
+                    finish();
+                    Intent homepage = new Intent(MainActivity.this, LoginView.class);
+                    startActivity(homepage);
+                })
+                .setNegativeButton("Nein", null)
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .show();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -33,6 +55,16 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
         String user = intent.getStringExtra("user");
         mainPresenter = new MainPresenter(this, this.getApplicationContext(), user);
         setupTabs();
+        hideKeyBoard();
+    }
+
+    void hideKeyBoard() {
+        // Hide keyboard for better UX
+        InputMethodManager imm = (InputMethodManager)
+                this.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        View view = findViewById(android.R.id.content);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override

@@ -24,7 +24,7 @@ private View view;
 private RecyclerView recyclerView;
 PlantsAdapter plantsAdapter;
 private List<Object> data;
-    public PlantsFragment(){
+    public PlantsFragment() {
         // Required empty public constructor
     }
 
