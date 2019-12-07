@@ -33,11 +33,12 @@ public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsView
         public ImageView imageView;
         public ProgressBar waterValue;
         public LinearLayout plantContainer;
+        public String userName;
 
-        public PlantsViewHolder(View v) {
+        public PlantsViewHolder(View v, String name) {
             super(v);
             view = v ;
-            //textView = view.findViewById(R.id.plant_row_text);
+            userName = name;
             imageView = view.findViewById(R.id.plant_row_image);
             waterValue = view.findViewById(R.id.plant_row_watervalue);
             plantContainer = view.findViewById(R.id.plant_container);
@@ -63,7 +64,7 @@ public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsView
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.plant_row, parent, false);
-        PlantsViewHolder vh = new PlantsViewHolder(v);
+        PlantsViewHolder vh = new PlantsViewHolder(v, MainActivity.user);
         return vh;
     }
 
@@ -76,6 +77,7 @@ public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsView
         plantsViewHolder.plantContainer.setOnClickListener(v -> {
             activity.finish();
             Intent plantDetailView = new Intent(activity, PlantDetailView.class);
+            plantDetailView.putExtra("user", plantsViewHolder.userName);
             activity.startActivity(plantDetailView);
         });
     }

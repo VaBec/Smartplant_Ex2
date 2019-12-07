@@ -22,7 +22,6 @@ import de.htwg.smartplant.R;
 import de.htwg.smartplant.login.LoginView;
 import de.htwg.smartplant.main.fragments.AnalyseFragment;
 import de.htwg.smartplant.main.fragments.PlantsFragment;
-import de.htwg.smartplant.plantdetail.PlantDetailView;
 
 public class MainActivity extends AppCompatActivity implements MainPresenter.IMainActivity {
 
@@ -30,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
     private ViewPager viewPager;
     private TabsPagerAdapter tabsPagerAdapter;
     private MainPresenter mainPresenter;
+    public static String user;
 
     @Override
     public void onBackPressed() {
@@ -52,13 +52,13 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
         setContentView(R.layout.activity_main);
         Intent intent = getIntent();
         String user = intent.getStringExtra("user");
+        MainActivity.user = user;
         mainPresenter = new MainPresenter(this, this.getApplicationContext(), user);
         setupTabs();
         hideKeyBoard();
     }
 
     void hideKeyBoard() {
-        // Hide keyboard for better UX
         InputMethodManager imm = (InputMethodManager)
                 this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
