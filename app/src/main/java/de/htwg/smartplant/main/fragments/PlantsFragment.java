@@ -1,6 +1,7 @@
 package de.htwg.smartplant.main.fragments;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,11 +22,17 @@ import de.htwg.smartplant.main.recycler.PlantsAdapter;
 public class PlantsFragment extends Fragment implements MainPresenter.IPlantsView {
 
 private View view;
+private Activity activity;
 private RecyclerView recyclerView;
 PlantsAdapter plantsAdapter;
+
 private List<Object> data;
     public PlantsFragment() {
         // Required empty public constructor
+    }
+
+    public PlantsFragment(Activity activity) {
+        this.activity = activity;
     }
 
     @Override
@@ -38,13 +45,13 @@ private List<Object> data;
     }
 
     private void setUpRecycler(View view){
-        recyclerView = (RecyclerView)view.findViewById(R.id.recycler_plants);
+        recyclerView = view.findViewById(R.id.recycler_plants);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
-    public void addPlantsData(List<String> plants) {
-        plantsAdapter = new PlantsAdapter(plants);
+    public void addPlantsData(List<String> plants, List<Integer> waterValues, List<Integer> plantTypes) {
+        plantsAdapter = new PlantsAdapter(plants, waterValues, plantTypes, this.activity);
         recyclerView.setAdapter(plantsAdapter);
         plantsAdapter.notifyDataSetChanged();
     }

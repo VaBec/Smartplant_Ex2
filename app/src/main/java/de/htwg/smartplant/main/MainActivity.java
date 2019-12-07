@@ -1,7 +1,6 @@
 package de.htwg.smartplant.main;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -23,6 +22,7 @@ import de.htwg.smartplant.R;
 import de.htwg.smartplant.login.LoginView;
 import de.htwg.smartplant.main.fragments.AnalyseFragment;
 import de.htwg.smartplant.main.fragments.PlantsFragment;
+import de.htwg.smartplant.plantdetail.PlantDetailView;
 
 public class MainActivity extends AppCompatActivity implements MainPresenter.IMainActivity {
 
@@ -33,14 +33,13 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
 
     @Override
     public void onBackPressed() {
-        // Nichts tun
         new AlertDialog.Builder(this)
                 .setTitle("Logout")
-                .setMessage("Wollen Sie sich sicher ausloggen?")
+                .setMessage("Wirklich ausloggen?")
                 .setPositiveButton("Ja", (dialog, which) -> {
                     finish();
-                    Intent homepage = new Intent(MainActivity.this, LoginView.class);
-                    startActivity(homepage);
+                    Intent loginView = new Intent(MainActivity.this, LoginView.class);
+                    startActivity(loginView);
                 })
                 .setNegativeButton("Nein", null)
                 .setIcon(android.R.drawable.ic_dialog_info)
@@ -76,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
 
         try {
             getPlants();
-            tabsPagerAdapter.AddFragment(new PlantsFragment(), getString(R.string.tab_text_1) );
+            tabsPagerAdapter.AddFragment(new PlantsFragment(this), getString(R.string.tab_text_1) );
             tabsPagerAdapter.AddFragment(new AnalyseFragment(), getString(R.string.tab_text_2));
             //tabsPagerAdapter.AddFragment(new UserFragment(), getString(R.string.tab_text_3));
         } catch (UnsupportedEncodingException e) {
@@ -101,20 +100,44 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
     }
 
     @Override
-    public void updatePlantsData(JSONArray plants) {
+    public void updatePlantsData(JSONArray plantData) {
         PlantsFragment plantsFragment = (PlantsFragment) tabsPagerAdapter.getItem(0);
-        plantsFragment.addPlantsData(extractIDs(plants));
+        plantsFragment.addPlantsData(extractIDs(plantData), extractWaterValues(plantData), extractPlantType(plantData));
+    }
+
+    private List<Integer> extractPlantType(JSONArray array) {
+        List<Integer> result = new ArrayList<>();
+        try {
+            for (int i = 0; i < array.length(); i++) {
+                result.add(Integer.valueOf(array.getJSONObject(i).getString("plantType") + ""));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private List<Integer> extractWaterValues(JSONArray array) {
+        List<Integer> result = new ArrayList<>();
+        try {
+            for (int i = 0; i < array.length(); i++) {
+                result.add(Integer.valueOf(array.getJSONObject(i).getString("watervalue") + ""));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     private List<String> extractIDs(JSONArray array) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         try {
-        for (int i = 0; i < array.length(); i++) {
+            for (int i = 0; i < array.length(); i++) {
                 result.add(array.getJSONObject(i).getString("id") + "");
-        }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return result;
     }
 }
