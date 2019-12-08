@@ -11,24 +11,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import java.util.List;
 
 import de.htwg.smartplant.R;
-import de.htwg.smartplant.login.LoginView;
 import de.htwg.smartplant.main.MainActivity;
+import de.htwg.smartplant.plantdetail.PlantDetailObjectModel;
 import de.htwg.smartplant.plantdetail.PlantDetailView;
 
 public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsViewHolder> {
 
     private final Activity activity;
-    private List<Integer> waterValues;
-    private List<Integer> plantTypes;
-    private List<String> plantIds;
+
+    private List<PlantDetailObjectModel> plantDetailObjectModels;
 
     public static class PlantsViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
-        //public TextView textView;
         public View view;
         public ImageView imageView;
         public ProgressBar waterValue;
@@ -45,39 +41,32 @@ public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsView
         }
     }
 
-    public PlantsAdapter(List<String> plantIds, List<Integer> waterValues, List<Integer> plantTypes, Activity activity) {
-        this.plantIds = plantIds;
-        this.waterValues = waterValues;
-        this.plantTypes = plantTypes;
+    public PlantsAdapter(List<PlantDetailObjectModel> plantDetailObjectModels, Activity activity) {
+        this.plantDetailObjectModels = plantDetailObjectModels;
         this.activity = activity;
-    }
-
-    public void updateData(List<String> plantIds, List<Integer> waterValues, List<Integer> plantTypes) {
-        this.waterValues = waterValues;
-        this.plantIds = plantIds;
-        this.plantTypes = plantTypes;
     }
 
     @NonNull
     @Override
     public PlantsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // create a new view
         View v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.plant_row, parent, false);
-        PlantsViewHolder vh = new PlantsViewHolder(v, MainActivity.user);
-        return vh;
+        return new PlantsViewHolder(v, MainActivity.user);
     }
 
     @Override
     public void onBindViewHolder(@NonNull PlantsViewHolder plantsViewHolder, int i) {
-        //plantsViewHolder.textView.setText(plantIds.get(i));
-        plantsViewHolder.imageView.setImageResource(getImageOfPlant(plantTypes.get(i)));
-        styleProgressBar(waterValues.get(i), plantsViewHolder.waterValue);
+        int image = getImageOfPlant(plantDetailObjectModels.get(i).getPlantType());
+        plantsViewHolder.imageView.setImageResource(image);
+        styleProgressBar(plantDetailObjectModels.get(i).getWaterValue(), plantsViewHolder.waterValue);
 
         plantsViewHolder.plantContainer.setOnClickListener(v -> {
             activity.finish();
             Intent plantDetailView = new Intent(activity, PlantDetailView.class);
-            plantDetailView.putExtra("user", plantsViewHolder.userName);
+
+            plantDetailObjectModels.get(i).setUser(plantsViewHolder.userName);
+            plantDetailView.putExtra("plant", plantDetailObjectModels.get(i));
+
             activity.startActivity(plantDetailView);
         });
     }
@@ -116,6 +105,6 @@ public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsView
 
     @Override
     public int getItemCount() {
-        return plantIds.size();
+        return plantDetailObjectModels.size();
     }
 }

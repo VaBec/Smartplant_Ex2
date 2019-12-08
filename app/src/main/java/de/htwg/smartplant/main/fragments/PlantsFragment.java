@@ -15,21 +15,18 @@ import java.util.List;
 import de.htwg.smartplant.R;
 import de.htwg.smartplant.main.MainPresenter;
 import de.htwg.smartplant.main.recycler.PlantsAdapter;
+import de.htwg.smartplant.plantdetail.PlantDetailObjectModel;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class PlantsFragment extends Fragment implements MainPresenter.IPlantsView {
 
-private View view;
-private Activity activity;
-private RecyclerView recyclerView;
-PlantsAdapter plantsAdapter;
+    private Activity activity;
+    private RecyclerView recyclerView;
+    PlantsAdapter plantsAdapter;
 
-private List<Object> data;
-    public PlantsFragment() {
-        // Required empty public constructor
-    }
+    public PlantsFragment() { }
 
     public PlantsFragment(Activity activity) {
         this.activity = activity;
@@ -38,8 +35,7 @@ private List<Object> data;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_plants, container, false);
+        View view = inflater.inflate(R.layout.fragment_plants, container, false);
         setUpRecycler(view);
         return view;
     }
@@ -50,8 +46,8 @@ private List<Object> data;
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
-    public void addPlantsData(List<String> plants, List<Integer> waterValues, List<Integer> plantTypes) {
-        plantsAdapter = new PlantsAdapter(plants, waterValues, plantTypes, this.activity);
+    public void addPlantsData(List<PlantDetailObjectModel> plants) {
+        plantsAdapter = new PlantsAdapter(plants, this.activity);
         recyclerView.setAdapter(plantsAdapter);
         plantsAdapter.notifyDataSetChanged();
     }
