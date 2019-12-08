@@ -103,9 +103,10 @@ public class LoginView extends AppCompatActivity implements LoginPresenter.ILogi
     }
 
     @Override
-    public void startMainActivity(String name) {
+    public void startMainActivity(String name, String password) {
         Intent intent = new Intent(this, MainActivity.class);
         Utils.user = name;
+        Utils.password = password;
         startActivity(intent);
     }
 

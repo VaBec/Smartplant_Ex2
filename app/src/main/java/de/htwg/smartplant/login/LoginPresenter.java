@@ -96,7 +96,7 @@ public class LoginPresenter implements HttpNotifier {
             }
             else
             {
-                view.startMainActivity(userModel.getName());
+                view.startMainActivity(userModel.getName(), userModel.getPassword());
             }
 
         } catch(Exception e){
@@ -130,6 +130,6 @@ public class LoginPresenter implements HttpNotifier {
 
         void showToast(String text, int length);
 
-        void startMainActivity(String userName);
+        void startMainActivity(String userName, String password);
     }
 }

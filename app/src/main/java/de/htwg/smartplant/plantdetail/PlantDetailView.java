@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -13,10 +12,11 @@ import android.widget.TextView;
 
 import de.htwg.smartplant.R;
 import de.htwg.smartplant.Utils;
-import de.htwg.smartplant.login.LoginView;
 import de.htwg.smartplant.main.MainActivity;
 
 public class PlantDetailView extends AppCompatActivity {
+
+    private PlantDetailObjectModel model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,12 +24,12 @@ public class PlantDetailView extends AppCompatActivity {
         setContentView(R.layout.plant_detail);
 
         Intent intent = getIntent();
-        PlantDetailObjectModel model = (PlantDetailObjectModel) intent.getExtras().get("plant");
+        this.model = (PlantDetailObjectModel) intent.getExtras().get("plant");
 
-        setViewData(model);
+        setViewData();
     }
 
-    private void setViewData(PlantDetailObjectModel model) {
+    private void setViewData() {
         ProgressBar waterValue = findViewById(R.id.waterValue);
         TextView macText = findViewById(R.id.macAddressText);
         TextView dateText = findViewById(R.id.dateText);
@@ -46,7 +46,7 @@ public class PlantDetailView extends AppCompatActivity {
                     .setTitle("Löschen")
                     .setMessage("Wirklich löschen?")
                     .setPositiveButton("Ja", (dialog, which) -> {
-
+                        sendDeleteRequest();
                     })
                     .setNegativeButton("Nein", null)
                     .setIcon(android.R.drawable.ic_dialog_alert)
@@ -54,8 +54,14 @@ public class PlantDetailView extends AppCompatActivity {
         });
     }
 
+    private void sendDeleteRequest() {
+        String id = model.getId();
+        String userName = Utils.user;
+        String password = Utils.password;
+    }
+
     private String formatTimeStamp(String timeStamp) {
-        String result = "";
+        String result;
 
         result = timeStamp.replace("/", ".");
         for(int i=0 ; i<result.length() ; i++) {

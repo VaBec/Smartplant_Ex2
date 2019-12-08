@@ -120,5 +120,6 @@ public class UserModel {
         return requestType;
     }
     public String getName(){return name;}
+    public String getPassword(){return password;}
     public Long getID() {return this.id;}
 }
