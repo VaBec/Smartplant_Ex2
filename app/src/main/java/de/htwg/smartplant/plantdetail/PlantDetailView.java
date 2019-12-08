@@ -3,13 +3,17 @@ package de.htwg.smartplant.plantdetail;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import de.htwg.smartplant.R;
 import de.htwg.smartplant.Utils;
+import de.htwg.smartplant.login.LoginView;
 import de.htwg.smartplant.main.MainActivity;
 
 public class PlantDetailView extends AppCompatActivity {
@@ -22,19 +26,32 @@ public class PlantDetailView extends AppCompatActivity {
         Intent intent = getIntent();
         PlantDetailObjectModel model = (PlantDetailObjectModel) intent.getExtras().get("plant");
 
-        setFieldData(model);
+        setViewData(model);
     }
 
-    private void setFieldData(PlantDetailObjectModel model) {
+    private void setViewData(PlantDetailObjectModel model) {
         ProgressBar waterValue = findViewById(R.id.waterValue);
         TextView macText = findViewById(R.id.macAddressText);
         TextView dateText = findViewById(R.id.dateText);
         ImageView plantImage = findViewById(R.id.plantImage);
+        Button deleteButton = findViewById(R.id.deleteButton);
 
         this.styleProgressBar(model.getWaterValue(), waterValue);
         plantImage.setImageResource(getImageOfPlant(model.getPlantType()));
         macText.setText(model.getMac());
         dateText.setText(this.formatTimeStamp(model.getTimeStamp()));
+
+        deleteButton.setOnClickListener(event -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Löschen")
+                    .setMessage("Wirklich löschen?")
+                    .setPositiveButton("Ja", (dialog, which) -> {
+
+                    })
+                    .setNegativeButton("Nein", null)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        });
     }
 
     private String formatTimeStamp(String timeStamp) {

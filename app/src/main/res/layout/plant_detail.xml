@@ -116,4 +116,19 @@
         app:layout_constraintVertical_bias="0.099"
         app:srcCompat="@drawable/plant" />
 
+    <Button
+        android:id="@+id/deleteButton"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="322dp"
+        android:layout_height="77dp"
+        android:background="#CBFA1414"
+        android:text="Pflanze löschen"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.944" />
+
 </android.support.constraint.ConstraintLayout>
