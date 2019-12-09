@@ -21,6 +21,11 @@ public class RequestHandler extends JsonHttpResponseHandler {
     }
 
     @Override
+    public void onFailure(int statusCode, Header[] headers, String s, Throwable e) {
+        int db = 3;
+    }
+
+    @Override
     public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResponse) {
         notifier.showFailure(errorResponse);
     }

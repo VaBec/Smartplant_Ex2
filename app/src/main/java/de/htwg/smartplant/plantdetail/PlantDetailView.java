@@ -9,14 +9,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import de.htwg.smartplant.R;
 import de.htwg.smartplant.Utils;
 import de.htwg.smartplant.main.MainActivity;
 
-public class PlantDetailView extends AppCompatActivity {
+public class PlantDetailView extends AppCompatActivity implements PlantDetailPresenter.IDetailView{
 
     private PlantDetailObjectModel model;
+    private PlantDetailPresenter plantDetailPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +27,8 @@ public class PlantDetailView extends AppCompatActivity {
 
         Intent intent = getIntent();
         this.model = (PlantDetailObjectModel) intent.getExtras().get("plant");
-
+        this.plantDetailPresenter = new PlantDetailPresenter(this, this.getApplicationContext());
+        
         setViewData();
     }
 
@@ -41,23 +44,19 @@ public class PlantDetailView extends AppCompatActivity {
         macText.setText(model.getMac());
         dateText.setText(this.formatTimeStamp(model.getTimeStamp()));
 
-        deleteButton.setOnClickListener(event -> {
-            new AlertDialog.Builder(this)
-                    .setTitle("Löschen")
-                    .setMessage("Wirklich löschen?")
-                    .setPositiveButton("Ja", (dialog, which) -> {
-                        sendDeleteRequest();
-                    })
-                    .setNegativeButton("Nein", null)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-        });
+        deleteButton.setOnClickListener(event -> createDeleteDialog());
     }
 
-    private void sendDeleteRequest() {
-        String id = model.getId();
-        String userName = Utils.user;
-        String password = Utils.password;
+    private void createDeleteDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Löschen")
+                .setMessage("Wirklich löschen?")
+                .setPositiveButton("Ja", (dialog, which) -> plantDetailPresenter.deletePlant(
+                        model.getId(), Utils.user, Utils.password
+                ))
+                .setNegativeButton("Nein", null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     private String formatTimeStamp(String timeStamp) {
@@ -142,5 +141,22 @@ public class PlantDetailView extends AppCompatActivity {
         Intent mainView = new Intent(this, MainActivity.class);
         mainView.putExtra("user", Utils.user);
         startActivity(mainView);
+    }
+
+    @Override
+    public void startDeleting() {
+
+    }
+
+    @Override
+    public void showToast(String text, int length) {
+        Toast toast = Toast.makeText(getApplicationContext(), text, length);
+
+        toast.show();
+    }
+
+    @Override
+    public void openMainView() {
+
     }
 }

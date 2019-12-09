@@ -96,9 +96,7 @@ public class LoginView extends AppCompatActivity implements LoginPresenter.ILogi
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // Hide keyboard on any touch on the activity for better ux
         hideKeyboard();
-
         return true;
     }
 
