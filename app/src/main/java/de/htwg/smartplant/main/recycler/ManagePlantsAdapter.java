@@ -16,33 +16,31 @@ import com.loopj.android.http.AsyncHttpClient;
 import org.json.JSONObject;
 
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.protocol.HTTP;
 import de.htwg.smartplant.R;
-import de.htwg.smartplant.plantdetail.PlantDetailObjectModel;
+import de.htwg.smartplant.jsonmodels.Plant;
 import de.htwg.smartplant.rest.HttpNotifier;
 import de.htwg.smartplant.rest.RequestHandler;
 
 import static de.htwg.smartplant.rest.RequestHandler.BASE_URL;
 
-public class PlantManageAdapter extends RecyclerView.Adapter<PlantManageAdapter.PlantManageViewHolder> {
+public class ManagePlantsAdapter extends RecyclerView.Adapter<ManagePlantsAdapter.PlantManageViewHolder> {
 
     private final Activity activity;
-    private final PlantsAdapter plantsAdapter;
+    private final YourPlantsAdapter yourPlantsAdapter;
 
-    private List<PlantDetailObjectModel> plantDetailObjectModels;
+    private List<Plant> plantDetailObjectModels;
     private String userName;
     private String password;
 
-    public List<PlantDetailObjectModel> getPlants() {
+    public List<Plant> getPlants() {
         return plantDetailObjectModels;
     }
 
-    public void updateData(List<PlantDetailObjectModel> plants) {
+    public void updateData(List<Plant> plants) {
         this.plantDetailObjectModels = plants;
     }
 
@@ -64,13 +62,13 @@ public class PlantManageAdapter extends RecyclerView.Adapter<PlantManageAdapter.
         }
     }
 
-    public PlantManageAdapter(List<PlantDetailObjectModel> plantDetailObjectModels, Activity activity,
-                              String userName, String password, PlantsAdapter plantsAdapter) {
+    public ManagePlantsAdapter(List<Plant> plantDetailObjectModels, Activity activity,
+                               String userName, String password, YourPlantsAdapter yourPlantsAdapter) {
         this.plantDetailObjectModels = plantDetailObjectModels;
         this.activity = activity;
         this.userName = userName;
         this.password = password;
-        this.plantsAdapter = plantsAdapter;
+        this.yourPlantsAdapter = yourPlantsAdapter;
     }
 
     @NonNull
@@ -138,8 +136,8 @@ public class PlantManageAdapter extends RecyclerView.Adapter<PlantManageAdapter.
                             plantDetailObjectModels.remove(deletedIndex);
                             notifyItemRemoved(deletedIndex);
 
-                            plantsAdapter.removeFromList(deletedIndex);
-                            plantsAdapter.notifyItemRemoved(deletedIndex);
+                            yourPlantsAdapter.removeFromList(deletedIndex);
+                            yourPlantsAdapter.notifyItemRemoved(deletedIndex);
                         }
 
                         @Override

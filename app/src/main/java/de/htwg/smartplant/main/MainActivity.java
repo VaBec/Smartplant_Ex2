@@ -7,6 +7,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -19,10 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.htwg.smartplant.R;
+import de.htwg.smartplant.jsonmodels.Plant;
 import de.htwg.smartplant.login.LoginView;
-import de.htwg.smartplant.main.fragments.AnalyseFragment;
-import de.htwg.smartplant.main.fragments.PlantsFragment;
-import de.htwg.smartplant.plantdetail.PlantDetailObjectModel;
+import de.htwg.smartplant.main.datapoller.DataPoller;
+import de.htwg.smartplant.main.fragments.HandlePlantsFragment;
+import de.htwg.smartplant.main.fragments.YourPlantsFragment;
 
 public class MainActivity extends AppCompatActivity implements MainPresenter.IMainActivity {
 
@@ -62,6 +64,12 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
         hideKeyBoard();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.dataPoller.stopPolling();
+    }
+
     void hideKeyBoard() {
         InputMethodManager imm = (InputMethodManager)
                 this.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -79,8 +87,8 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
 
         try {
             getPlants();
-            tabsPagerAdapter.AddFragment(new PlantsFragment(), getString(R.string.tab_text_1) );
-            tabsPagerAdapter.AddFragment(new AnalyseFragment(), getString(R.string.tab_text_2));
+            tabsPagerAdapter.AddFragment(new YourPlantsFragment(), getString(R.string.tab_text_1) );
+            tabsPagerAdapter.AddFragment(new HandlePlantsFragment(), getString(R.string.tab_text_2));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -104,59 +112,21 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
 
     @Override
     public void updatePlantsData(JSONArray plantData) {
-        PlantsFragment plantsFragment = (PlantsFragment) tabsPagerAdapter.getItem(0);
-        plantsFragment.addPlantsData(createPlants(plantData), this.userName, this.password);
+        List<Plant> plants = new ArrayList<>();
 
-        AnalyseFragment analyseFragment = (AnalyseFragment) tabsPagerAdapter.getItem(1);
-        analyseFragment.addPlantsData(createPlants(plantData), this.userName, this.password, plantsFragment);
+        try {
+            Plant.createPlantListFromJSON(plantData);
+        } catch(Exception e) {
+            Log.d("MainActivity", e.getMessage());
+        }
+
+        YourPlantsFragment yourPlantsFragment = (YourPlantsFragment) tabsPagerAdapter.getItem(0);
+        HandlePlantsFragment handlePlantsFragment = (HandlePlantsFragment) tabsPagerAdapter.getItem(1);
+
+        yourPlantsFragment.addPlantsData(plants, this.userName, this.password);
+        handlePlantsFragment.addPlantsData(plants, this.userName, this.password, yourPlantsFragment);
         
-        this.dataPoller = new DataPoller(plantsFragment, analyseFragment, this.userName, this);
-        this.dataPoller.pollData();
-    }
-
-
-    private List<PlantDetailObjectModel> createPlants(JSONArray array) {
-        List<PlantDetailObjectModel> result = new ArrayList<>();
-        String errorMessage = "";
-
-        for(int i=0 ; i<array.length() ; i++) {
-            try {
-                PlantDetailObjectModel model = new PlantDetailObjectModel();
-
-                model.setId(
-                        array.getJSONObject(i).getString("id")
-                );
-
-                model.setPlantType(
-                        Integer.valueOf(array.getJSONObject(i).getString("plantType"))
-                );
-
-                model.setMac(
-                        array.getJSONObject(i).getString("macAddress")
-                );
-
-                model.setWaterValue(
-                        Integer.valueOf(array.getJSONObject(i).getString("watervalue"))
-                );
-
-                model.setTimeStamp(
-                        array.getJSONObject(i).getString("timeStamp")
-                );
-
-                model.setId(
-                        array.getJSONObject(i).getString("id")
-                );
-
-                result.add(model);
-            } catch (Exception e) {
-                errorMessage += e.getMessage() + "\n";
-            }
-        }
-
-        if(!errorMessage.equals("")) {
-            showToast(errorMessage, Toast.LENGTH_LONG);
-        }
-
-        return result;
+        this.dataPoller = new DataPoller(yourPlantsFragment, handlePlantsFragment, this.userName, this);
+        this.dataPoller.startPolling();
     }
 }

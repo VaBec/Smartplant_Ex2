@@ -15,18 +15,17 @@ import android.widget.TextView;
 import java.util.List;
 
 import de.htwg.smartplant.R;
-import de.htwg.smartplant.main.MainActivity;
-import de.htwg.smartplant.plantdetail.PlantDetailObjectModel;
+import de.htwg.smartplant.jsonmodels.Plant;
 
-public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsViewHolder> {
+public class YourPlantsAdapter extends RecyclerView.Adapter<YourPlantsAdapter.PlantsViewHolder> {
 
     private final Activity activity;
     private String userName;
     private String password;
 
-    private List<PlantDetailObjectModel> plantDetailObjectModels;
+    private List<Plant> plantDetailObjectModels;
 
-    public void updateData(List<PlantDetailObjectModel> plants) {
+    public void updateData(List<Plant> plants) {
         this.plantDetailObjectModels = plants;
     }
 
@@ -49,8 +48,8 @@ public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsView
         }
     }
 
-    public PlantsAdapter(List<PlantDetailObjectModel> plantDetailObjectModels, Activity activity,
-                         String userName, String password) {
+    public YourPlantsAdapter(List<Plant> plantDetailObjectModels, Activity activity,
+                             String userName, String password) {
         this.plantDetailObjectModels = plantDetailObjectModels;
         this.activity = activity;
         this.userName = userName;

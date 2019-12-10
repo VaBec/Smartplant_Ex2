@@ -1,7 +1,6 @@
 package de.htwg.smartplant.main.fragments;
 
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,19 +12,19 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import de.htwg.smartplant.R;
+import de.htwg.smartplant.jsonmodels.Plant;
 import de.htwg.smartplant.main.MainPresenter;
-import de.htwg.smartplant.main.recycler.PlantsAdapter;
-import de.htwg.smartplant.plantdetail.PlantDetailObjectModel;
+import de.htwg.smartplant.main.recycler.YourPlantsAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PlantsFragment extends Fragment implements MainPresenter.IPlantsView {
+public class YourPlantsFragment extends Fragment implements MainPresenter.IPlantsView {
 
     private RecyclerView recyclerView;
-    PlantsAdapter plantsAdapter;
+    YourPlantsAdapter yourPlantsAdapter;
 
-    public PlantsFragment() { }
+    public YourPlantsFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,13 +40,13 @@ public class PlantsFragment extends Fragment implements MainPresenter.IPlantsVie
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
-    public void addPlantsData(List<PlantDetailObjectModel> plants, String userName, String password) {
-        plantsAdapter = new PlantsAdapter(plants, getActivity(), userName, password);
-        recyclerView.setAdapter(plantsAdapter);
-        plantsAdapter.notifyDataSetChanged();
+    public void addPlantsData(List<Plant> plants, String userName, String password) {
+        yourPlantsAdapter = new YourPlantsAdapter(plants, getActivity(), userName, password);
+        recyclerView.setAdapter(yourPlantsAdapter);
+        yourPlantsAdapter.notifyDataSetChanged();
     }
 
-    public PlantsAdapter getPlantsAdapter() {
-        return plantsAdapter;
+    public YourPlantsAdapter getYourPlantsAdapter() {
+        return yourPlantsAdapter;
     }
 }

@@ -12,17 +12,16 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import de.htwg.smartplant.R;
-import de.htwg.smartplant.main.recycler.PlantManageAdapter;
-import de.htwg.smartplant.main.recycler.PlantsAdapter;
-import de.htwg.smartplant.plantdetail.PlantDetailObjectModel;
+import de.htwg.smartplant.jsonmodels.Plant;
+import de.htwg.smartplant.main.recycler.ManagePlantsAdapter;
 
-public class AnalyseFragment extends Fragment {
+public class HandlePlantsFragment extends Fragment {
     private Activity activity;
     private View view;
     private RecyclerView recyclerView;
-    private PlantManageAdapter plantsManagedAdapter;
+    private ManagePlantsAdapter plantsManagedAdapter;
 
-    public AnalyseFragment() { }
+    public HandlePlantsFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,13 +38,13 @@ public class AnalyseFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
-    public void addPlantsData(List<PlantDetailObjectModel> plants, String userName, String password, PlantsFragment plantsFragment) {
-        plantsManagedAdapter = new PlantManageAdapter(plants, getActivity(), userName, password, plantsFragment.getPlantsAdapter());
+    public void addPlantsData(List<Plant> plants, String userName, String password, YourPlantsFragment yourPlantsFragment) {
+        plantsManagedAdapter = new ManagePlantsAdapter(plants, getActivity(), userName, password, yourPlantsFragment.getYourPlantsAdapter());
         recyclerView.setAdapter(plantsManagedAdapter);
         plantsManagedAdapter.notifyDataSetChanged();
     }
 
-    public PlantManageAdapter getPlantManageAdapter() {
+    public ManagePlantsAdapter getPlantManageAdapter() {
         return plantsManagedAdapter;
     }
 }
