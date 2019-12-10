@@ -26,6 +26,10 @@ public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsView
 
     private List<PlantDetailObjectModel> plantDetailObjectModels;
 
+    public void updateData(List<PlantDetailObjectModel> plants) {
+        this.plantDetailObjectModels = plants;
+    }
+
     public static class PlantsViewHolder extends RecyclerView.ViewHolder {
         public View view;
         public ImageView imageView;

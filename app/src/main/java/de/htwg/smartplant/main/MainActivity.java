@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
     private MainPresenter mainPresenter;
     private String userName;
     private String password;
+    private DataPoller dataPoller;
 
     @Override
     public void onBackPressed() {
@@ -108,7 +109,11 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
 
         AnalyseFragment analyseFragment = (AnalyseFragment) tabsPagerAdapter.getItem(1);
         analyseFragment.addPlantsData(createPlants(plantData), this.userName, this.password, plantsFragment);
+        
+        this.dataPoller = new DataPoller(plantsFragment, analyseFragment, this.userName, this);
+        this.dataPoller.pollData();
     }
+
 
     private List<PlantDetailObjectModel> createPlants(JSONArray array) {
         List<PlantDetailObjectModel> result = new ArrayList<>();

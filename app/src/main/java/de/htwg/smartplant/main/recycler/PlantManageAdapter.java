@@ -1,7 +1,6 @@
 package de.htwg.smartplant.main.recycler;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -10,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -19,6 +16,8 @@ import com.loopj.android.http.AsyncHttpClient;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
@@ -38,6 +37,14 @@ public class PlantManageAdapter extends RecyclerView.Adapter<PlantManageAdapter.
     private List<PlantDetailObjectModel> plantDetailObjectModels;
     private String userName;
     private String password;
+
+    public List<PlantDetailObjectModel> getPlants() {
+        return plantDetailObjectModels;
+    }
+
+    public void updateData(List<PlantDetailObjectModel> plants) {
+        this.plantDetailObjectModels = plants;
+    }
 
     public static class PlantManageViewHolder extends RecyclerView.ViewHolder {
 

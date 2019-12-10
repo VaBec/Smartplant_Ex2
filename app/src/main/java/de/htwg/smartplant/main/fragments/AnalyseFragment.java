@@ -45,4 +45,7 @@ public class AnalyseFragment extends Fragment {
         plantsManagedAdapter.notifyDataSetChanged();
     }
 
+    public PlantManageAdapter getPlantManageAdapter() {
+        return plantsManagedAdapter;
+    }
 }
