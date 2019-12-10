@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
         try {
             getPlants();
             tabsPagerAdapter.AddFragment(new PlantsFragment(this), getString(R.string.tab_text_1) );
-            tabsPagerAdapter.AddFragment(new AnalyseFragment(), getString(R.string.tab_text_2));
+            tabsPagerAdapter.AddFragment(new AnalyseFragment(this), getString(R.string.tab_text_2));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -101,6 +101,9 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
     public void updatePlantsData(JSONArray plantData) {
         PlantsFragment plantsFragment = (PlantsFragment) tabsPagerAdapter.getItem(0);
         plantsFragment.addPlantsData(createPlants(plantData));
+
+        AnalyseFragment analyseFragment = (AnalyseFragment) tabsPagerAdapter.getItem(1);
+        analyseFragment.addPlantsData(createPlants(plantData));
     }
 
     private List<PlantDetailObjectModel> createPlants(JSONArray array) {

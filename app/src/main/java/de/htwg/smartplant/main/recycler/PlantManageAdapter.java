@@ -7,57 +7,52 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+
 import java.util.List;
 
 import de.htwg.smartplant.R;
-import de.htwg.smartplant.main.MainActivity;
 import de.htwg.smartplant.plantdetail.PlantDetailObjectModel;
 
-public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsViewHolder> {
+public class PlantManageAdapter extends RecyclerView.Adapter<PlantManageAdapter.PlantManageViewHolder> {
 
     private final Activity activity;
 
     private List<PlantDetailObjectModel> plantDetailObjectModels;
 
-    public static class PlantsViewHolder extends RecyclerView.ViewHolder {
-        public View view;
-        public ImageView imageView;
-        public ProgressBar waterValue;
-        public LinearLayout plantContainer;
-        public String userName;
+    public static class PlantManageViewHolder extends RecyclerView.ViewHolder {
 
-        public PlantsViewHolder(View v, String name) {
+
+        private final View view;
+        private final LinearLayout plantContainer;
+        private final Button button;
+
+        public PlantManageViewHolder(View v) {
             super(v);
             view = v ;
-            userName = name;
-            imageView = view.findViewById(R.id.plant_row_image);
-            waterValue = view.findViewById(R.id.plant_row_watervalue);
             plantContainer = view.findViewById(R.id.plant_container);
+            button = view.findViewById(R.id.testB);
         }
     }
 
-    public PlantsAdapter(List<PlantDetailObjectModel> plantDetailObjectModels, Activity activity) {
+    public PlantManageAdapter(List<PlantDetailObjectModel> plantDetailObjectModels, Activity activity) {
         this.plantDetailObjectModels = plantDetailObjectModels;
         this.activity = activity;
     }
 
     @NonNull
     @Override
-    public PlantsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PlantManageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-        .inflate(R.layout.plant_row, parent, false);
-        return new PlantsViewHolder(v, MainActivity.user);
+        .inflate(R.layout.plant_manage_row, parent, false);
+        return new PlantManageViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PlantsViewHolder plantsViewHolder, int i) {
-        int image = getImageOfPlant(plantDetailObjectModels.get(i).getPlantType());
-        plantsViewHolder.imageView.setImageResource(image);
-        styleProgressBar(plantDetailObjectModels.get(i).getWaterValue(), plantsViewHolder.waterValue);
-
+    public void onBindViewHolder(@NonNull PlantManageViewHolder plantsViewHolder, int i) {
+        plantsViewHolder.button.setText("?!?!");
         /*
         plantsViewHolder.plantContainer.setOnClickListener(v -> {
             activity.finish();
