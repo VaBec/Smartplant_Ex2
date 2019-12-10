@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.htwg.smartplant.R;
-import de.htwg.smartplant.Utils;
 import de.htwg.smartplant.login.LoginView;
 import de.htwg.smartplant.main.fragments.AnalyseFragment;
 import de.htwg.smartplant.main.fragments.PlantsFragment;
@@ -31,7 +30,9 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
     private ViewPager viewPager;
     private TabsPagerAdapter tabsPagerAdapter;
     private MainPresenter mainPresenter;
-    public static String user;
+    private String userName;
+    private String password;
+    private DataPoller dataPoller;
 
     @Override
     public void onBackPressed() {
@@ -51,8 +52,12 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = this.getIntent();
+        this.userName = intent.getStringExtra("username");
+        this.password = intent.getStringExtra("password");
+
         setContentView(R.layout.activity_main);
-        mainPresenter = new MainPresenter(this, this.getApplicationContext(), Utils.user);
+        mainPresenter = new MainPresenter(this, this.getApplicationContext(), this.userName);
         setupTabs();
         hideKeyBoard();
     }
@@ -74,8 +79,8 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
 
         try {
             getPlants();
-            tabsPagerAdapter.AddFragment(new PlantsFragment(this), getString(R.string.tab_text_1) );
-            tabsPagerAdapter.AddFragment(new AnalyseFragment(this), getString(R.string.tab_text_2));
+            tabsPagerAdapter.AddFragment(new PlantsFragment(), getString(R.string.tab_text_1) );
+            tabsPagerAdapter.AddFragment(new AnalyseFragment(), getString(R.string.tab_text_2));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -100,11 +105,15 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
     @Override
     public void updatePlantsData(JSONArray plantData) {
         PlantsFragment plantsFragment = (PlantsFragment) tabsPagerAdapter.getItem(0);
-        plantsFragment.addPlantsData(createPlants(plantData));
+        plantsFragment.addPlantsData(createPlants(plantData), this.userName, this.password);
 
         AnalyseFragment analyseFragment = (AnalyseFragment) tabsPagerAdapter.getItem(1);
-        analyseFragment.addPlantsData(createPlants(plantData));
+        analyseFragment.addPlantsData(createPlants(plantData), this.userName, this.password, plantsFragment);
+        
+        this.dataPoller = new DataPoller(plantsFragment, analyseFragment, this.userName, this);
+        this.dataPoller.pollData();
     }
+
 
     private List<PlantDetailObjectModel> createPlants(JSONArray array) {
         List<PlantDetailObjectModel> result = new ArrayList<>();
