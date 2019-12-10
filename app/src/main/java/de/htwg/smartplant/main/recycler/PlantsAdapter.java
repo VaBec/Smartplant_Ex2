@@ -60,6 +60,7 @@ public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsView
         plantsViewHolder.imageView.setImageResource(image);
         styleProgressBar(plantDetailObjectModels.get(i).getWaterValue(), plantsViewHolder.waterValue);
 
+        /*
         plantsViewHolder.plantContainer.setOnClickListener(v -> {
             activity.finish();
             Intent plantDetailView = new Intent(activity, PlantDetailView.class);
@@ -69,6 +70,7 @@ public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsView
 
             activity.startActivity(plantDetailView);
         });
+        */
     }
 
     private int getImageOfPlant(Integer plantType) {
