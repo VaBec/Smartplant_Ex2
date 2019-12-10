@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import de.htwg.smartplant.R;
-import de.htwg.smartplant.Utils;
 import de.htwg.smartplant.main.MainActivity;
 
 public class LoginView extends AppCompatActivity implements LoginPresenter.ILoginView {
@@ -105,8 +104,8 @@ public class LoginView extends AppCompatActivity implements LoginPresenter.ILogi
     @Override
     public void startMainActivity(String name, String password) {
         Intent intent = new Intent(this, MainActivity.class);
-        Utils.user = name;
-        Utils.password = password;
+        intent.putExtra("username", name);
+        intent.putExtra("password", password);
         startActivity(intent);
     }
 

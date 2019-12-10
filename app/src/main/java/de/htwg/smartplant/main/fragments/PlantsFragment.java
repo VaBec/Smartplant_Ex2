@@ -22,15 +22,10 @@ import de.htwg.smartplant.plantdetail.PlantDetailObjectModel;
  */
 public class PlantsFragment extends Fragment implements MainPresenter.IPlantsView {
 
-    private Activity activity;
     private RecyclerView recyclerView;
     PlantsAdapter plantsAdapter;
 
     public PlantsFragment() { }
-
-    public PlantsFragment(Activity activity) {
-        this.activity = activity;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,9 +41,13 @@ public class PlantsFragment extends Fragment implements MainPresenter.IPlantsVie
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
-    public void addPlantsData(List<PlantDetailObjectModel> plants) {
-        plantsAdapter = new PlantsAdapter(plants, this.activity);
+    public void addPlantsData(List<PlantDetailObjectModel> plants, String userName, String password) {
+        plantsAdapter = new PlantsAdapter(plants, getActivity(), userName, password);
         recyclerView.setAdapter(plantsAdapter);
         plantsAdapter.notifyDataSetChanged();
+    }
+
+    public PlantsAdapter getPlantsAdapter() {
+        return plantsAdapter;
     }
 }

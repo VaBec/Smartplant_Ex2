@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import java.util.List;
 
 import de.htwg.smartplant.R;
@@ -19,6 +21,8 @@ import de.htwg.smartplant.plantdetail.PlantDetailObjectModel;
 public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsViewHolder> {
 
     private final Activity activity;
+    private String userName;
+    private String password;
 
     private List<PlantDetailObjectModel> plantDetailObjectModels;
 
@@ -26,6 +30,7 @@ public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsView
         public View view;
         public ImageView imageView;
         public ProgressBar waterValue;
+        public TextView macLabel;
         public LinearLayout plantContainer;
         public String userName;
 
@@ -36,12 +41,20 @@ public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsView
             imageView = view.findViewById(R.id.plant_row_image);
             waterValue = view.findViewById(R.id.plant_row_watervalue);
             plantContainer = view.findViewById(R.id.plant_container);
+            macLabel = view.findViewById(R.id.macLabel);
         }
     }
 
-    public PlantsAdapter(List<PlantDetailObjectModel> plantDetailObjectModels, Activity activity) {
+    public PlantsAdapter(List<PlantDetailObjectModel> plantDetailObjectModels, Activity activity,
+                         String userName, String password) {
         this.plantDetailObjectModels = plantDetailObjectModels;
         this.activity = activity;
+        this.userName = userName;
+        this.password = password;
+    }
+
+    public void removeFromList(int index) {
+        this.plantDetailObjectModels.remove(index);
     }
 
     @NonNull
@@ -49,13 +62,14 @@ public class PlantsAdapter extends RecyclerView.Adapter<PlantsAdapter.PlantsView
     public PlantsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.plant_row, parent, false);
-        return new PlantsViewHolder(v, MainActivity.user);
+        return new PlantsViewHolder(v, this.userName);
     }
 
     @Override
     public void onBindViewHolder(@NonNull PlantsViewHolder plantsViewHolder, int i) {
         int image = getImageOfPlant(plantDetailObjectModels.get(i).getPlantType());
         plantsViewHolder.imageView.setImageResource(image);
+        plantsViewHolder.macLabel.setText("MAC: " + plantDetailObjectModels.get(i).getMac());
         styleProgressBar(plantDetailObjectModels.get(i).getWaterValue(), plantsViewHolder.waterValue);
 
         /*

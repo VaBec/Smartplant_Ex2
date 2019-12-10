@@ -20,15 +20,9 @@ public class AnalyseFragment extends Fragment {
     private Activity activity;
     private View view;
     private RecyclerView recyclerView;
-    private PlantManageAdapter plantsAdapter;
+    private PlantManageAdapter plantsManagedAdapter;
 
-    public AnalyseFragment() {
-        // Required empty public constructor
-    }
-
-    public AnalyseFragment(Activity activity) {
-        this.activity = activity;
-    }
+    public AnalyseFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,10 +39,10 @@ public class AnalyseFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
-    public void addPlantsData(List<PlantDetailObjectModel> plants) {
-        plantsAdapter = new PlantManageAdapter(plants, this.activity);
-        recyclerView.setAdapter(plantsAdapter);
-        plantsAdapter.notifyDataSetChanged();
+    public void addPlantsData(List<PlantDetailObjectModel> plants, String userName, String password, PlantsFragment plantsFragment) {
+        plantsManagedAdapter = new PlantManageAdapter(plants, getActivity(), userName, password, plantsFragment.getPlantsAdapter());
+        recyclerView.setAdapter(plantsManagedAdapter);
+        plantsManagedAdapter.notifyDataSetChanged();
     }
 
 }
