@@ -3,12 +3,8 @@ package de.htwg.smartplant.login;
 import android.content.Context;
 
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.RequestParams;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
 
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
@@ -17,7 +13,7 @@ import de.htwg.smartplant.rest.RequestHandler;
 
 import static de.htwg.smartplant.rest.RequestHandler.BASE_URL;
 
-public class UserModel {
+public class LoginModel {
 
     public enum RequestType {
         LOGIN,
@@ -28,17 +24,18 @@ public class UserModel {
         private String errorMessage;
 
         static {
-            LOGIN.retryMessage = "Can't login - trying again.";
-            REGISTER.retryMessage = "Can't register - trying again.";
+            LOGIN.retryMessage = "Fehler beim Login - Wiederhole den Vorgang.";
+            REGISTER.retryMessage = "Fehler beim Registrieren - Wiederhole den Vorgang.";
             NONE.retryMessage = "NONE RETRY";
 
-            LOGIN.errorMessage = createConnectErrorMessage(UserModel.LOGIN_ENDPOINT);
-            REGISTER.errorMessage = createConnectErrorMessage(UserModel.REGISTER_ENDPOINT);
+            LOGIN.errorMessage = createConnectErrorMessage(LoginModel.LOGIN_ENDPOINT);
+            REGISTER.errorMessage = createConnectErrorMessage(LoginModel.REGISTER_ENDPOINT);
             NONE.errorMessage = "NONE ERROR";
         }
 
         private static String createConnectErrorMessage(String endpoint) {
-            return "Can't connect to '" + RequestHandler.BASE_URL + endpoint + "'.";
+            return "Verbindung zu '" + RequestHandler.BASE_URL + endpoint + "' kann" +
+                    " nicht hergestellt werden.";
         }
 
         public String getRetryMessage() {
@@ -65,7 +62,7 @@ public class UserModel {
 
     private RequestType requestType = RequestType.NONE;
 
-    public UserModel(String name, String password, LoginPresenter loginPresenter, Context context) {
+    public LoginModel(String name, String password, LoginPresenter loginPresenter, Context context) {
         this.name = name;
         this.password = password;
         this.loginPresenter = loginPresenter;
@@ -120,5 +117,6 @@ public class UserModel {
         return requestType;
     }
     public String getName(){return name;}
+    public String getPassword(){return password;}
     public Long getID() {return this.id;}
 }

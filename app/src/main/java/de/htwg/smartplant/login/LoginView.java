@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import de.htwg.smartplant.R;
+import de.htwg.smartplant.Utils;
 import de.htwg.smartplant.main.MainActivity;
 
 public class LoginView extends AppCompatActivity implements LoginPresenter.ILoginView {
@@ -102,9 +103,10 @@ public class LoginView extends AppCompatActivity implements LoginPresenter.ILogi
     }
 
     @Override
-    public void startMainActivity(String name) {
+    public void startMainActivity(String name, String password) {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("user", name);
+        Utils.user = name;
+        Utils.password = password;
         startActivity(intent);
     }
 
@@ -180,7 +182,7 @@ public class LoginView extends AppCompatActivity implements LoginPresenter.ILogi
 
     @Override
     public void showStandardRegisterButton() {
-        registerButton.setText("Register");
+        registerButton.setText("Registrieren");
         registerButton.setEnabled(true);
         registerSpinner.setVisibility(View.INVISIBLE);
     }

@@ -11,7 +11,7 @@ public class LoginPresenter implements HttpNotifier {
 
     private final ILoginView view;
     private final Context context;
-    private UserModel userModel;
+    private LoginModel userModel;
 
     public LoginPresenter(ILoginView view, Context context) {
         this.view = view;
@@ -30,7 +30,7 @@ public class LoginPresenter implements HttpNotifier {
         if(!password1.equals(password2)) {
             view.showToast("Passwords do not match.", Toast.LENGTH_LONG);
         } else {
-            userModel = new UserModel(name, password1, this, context);
+            userModel = new LoginModel(name, password1, this, context);
 
             userModel.sendRegisterRequest();
             view.hideKeyboard();
@@ -41,7 +41,7 @@ public class LoginPresenter implements HttpNotifier {
         if(name.equals("") || password.equals("")) {
             view.showToast("Enter username and password.", Toast.LENGTH_LONG);
         } else {
-            userModel = new UserModel(name, password, this, context);
+            userModel = new LoginModel(name, password, this, context);
 
             userModel.sendLoginRequest();
             view.hideKeyboard();
@@ -73,10 +73,10 @@ public class LoginPresenter implements HttpNotifier {
 
         view.showToast(errorMessage, Toast.LENGTH_LONG);
 
-        if (userModel.getRequestType() == UserModel.RequestType.LOGIN) {
+        if (userModel.getRequestType() == LoginModel.RequestType.LOGIN) {
             view.showLoginView();
             view.showStandardLoginButton();
-        } else if (userModel.getRequestType() == UserModel.RequestType.REGISTER) {
+        } else if (userModel.getRequestType() == LoginModel.RequestType.REGISTER) {
             view.showRegisterView();
             view.showStandardRegisterButton();
         }
@@ -89,14 +89,14 @@ public class LoginPresenter implements HttpNotifier {
             String message = (String) response.get("payload");
             view.showToast(message, Toast.LENGTH_LONG);
 
-            if(userModel.getRequestType() == UserModel.RequestType.REGISTER) {
+            if(userModel.getRequestType() == LoginModel.RequestType.REGISTER) {
                 view.showStandardRegisterButton();
                 view.showLoginView();
                 view.showStandardLoginButton();
             }
             else
             {
-                view.startMainActivity(userModel.getName());
+                view.startMainActivity(userModel.getName(), userModel.getPassword());
             }
 
         } catch(Exception e){
@@ -106,11 +106,11 @@ public class LoginPresenter implements HttpNotifier {
 
     @Override
     public void showStart() {
-        UserModel.RequestType requestType = userModel.getRequestType();
+        LoginModel.RequestType requestType = userModel.getRequestType();
 
-        if(requestType == UserModel.RequestType.LOGIN) {
+        if(requestType == LoginModel.RequestType.LOGIN) {
             view.startLoggingIn();
-        } else if(requestType == UserModel.RequestType.REGISTER) {
+        } else if(requestType == LoginModel.RequestType.REGISTER) {
             view.startRegister();
         }
     }
@@ -130,6 +130,6 @@ public class LoginPresenter implements HttpNotifier {
 
         void showToast(String text, int length);
 
-        void startMainActivity(String userName);
+        void startMainActivity(String userName, String password);
     }
 }

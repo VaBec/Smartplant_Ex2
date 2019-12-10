@@ -19,10 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.htwg.smartplant.R;
+import de.htwg.smartplant.Utils;
 import de.htwg.smartplant.login.LoginView;
 import de.htwg.smartplant.main.fragments.AnalyseFragment;
 import de.htwg.smartplant.main.fragments.PlantsFragment;
-import de.htwg.smartplant.plantdetail.PlantDetailView;
+import de.htwg.smartplant.plantdetail.PlantDetailObjectModel;
 
 public class MainActivity extends AppCompatActivity implements MainPresenter.IMainActivity {
 
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
     private ViewPager viewPager;
     private TabsPagerAdapter tabsPagerAdapter;
     private MainPresenter mainPresenter;
+    public static String user;
 
     @Override
     public void onBackPressed() {
@@ -50,15 +52,12 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Intent intent = getIntent();
-        String user = intent.getStringExtra("user");
-        mainPresenter = new MainPresenter(this, this.getApplicationContext(), user);
+        mainPresenter = new MainPresenter(this, this.getApplicationContext(), Utils.user);
         setupTabs();
         hideKeyBoard();
     }
 
     void hideKeyBoard() {
-        // Hide keyboard for better UX
         InputMethodManager imm = (InputMethodManager)
                 this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -76,8 +75,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
         try {
             getPlants();
             tabsPagerAdapter.AddFragment(new PlantsFragment(this), getString(R.string.tab_text_1) );
-            tabsPagerAdapter.AddFragment(new AnalyseFragment(), getString(R.string.tab_text_2));
-            //tabsPagerAdapter.AddFragment(new UserFragment(), getString(R.string.tab_text_3));
+            tabsPagerAdapter.AddFragment(new AnalyseFragment(this), getString(R.string.tab_text_2));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -102,42 +100,54 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
     @Override
     public void updatePlantsData(JSONArray plantData) {
         PlantsFragment plantsFragment = (PlantsFragment) tabsPagerAdapter.getItem(0);
-        plantsFragment.addPlantsData(extractIDs(plantData), extractWaterValues(plantData), extractPlantType(plantData));
+        plantsFragment.addPlantsData(createPlants(plantData));
+
+        AnalyseFragment analyseFragment = (AnalyseFragment) tabsPagerAdapter.getItem(1);
+        analyseFragment.addPlantsData(createPlants(plantData));
     }
 
-    private List<Integer> extractPlantType(JSONArray array) {
-        List<Integer> result = new ArrayList<>();
-        try {
-            for (int i = 0; i < array.length(); i++) {
-                result.add(Integer.valueOf(array.getJSONObject(i).getString("plantType") + ""));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
+    private List<PlantDetailObjectModel> createPlants(JSONArray array) {
+        List<PlantDetailObjectModel> result = new ArrayList<>();
+        String errorMessage = "";
 
-    private List<Integer> extractWaterValues(JSONArray array) {
-        List<Integer> result = new ArrayList<>();
-        try {
-            for (int i = 0; i < array.length(); i++) {
-                result.add(Integer.valueOf(array.getJSONObject(i).getString("watervalue") + ""));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
+        for(int i=0 ; i<array.length() ; i++) {
+            try {
+                PlantDetailObjectModel model = new PlantDetailObjectModel();
 
-    private List<String> extractIDs(JSONArray array) {
-        List<String> result = new ArrayList<>();
-        try {
-            for (int i = 0; i < array.length(); i++) {
-                result.add(array.getJSONObject(i).getString("id") + "");
+                model.setId(
+                        array.getJSONObject(i).getString("id")
+                );
+
+                model.setPlantType(
+                        Integer.valueOf(array.getJSONObject(i).getString("plantType"))
+                );
+
+                model.setMac(
+                        array.getJSONObject(i).getString("macAddress")
+                );
+
+                model.setWaterValue(
+                        Integer.valueOf(array.getJSONObject(i).getString("watervalue"))
+                );
+
+                model.setTimeStamp(
+                        array.getJSONObject(i).getString("timeStamp")
+                );
+
+                model.setId(
+                        array.getJSONObject(i).getString("id")
+                );
+
+                result.add(model);
+            } catch (Exception e) {
+                errorMessage += e.getMessage() + "\n";
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
+
+        if(!errorMessage.equals("")) {
+            showToast(errorMessage, Toast.LENGTH_LONG);
+        }
+
         return result;
     }
 }

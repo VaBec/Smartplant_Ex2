@@ -2,7 +2,7 @@
     <string name="app_name">SmartPlant</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="tab_text_1">Deine Pflanzen</string>
-    <string name="tab_text_2">Analyse-werkzeuge</string>
+    <string name="tab_text_2">Pflanzen Verwalten</string>
     <string name="tab_text_3">User</string>
     <string name="tab_header_1">Alle deine Pflanzen:</string>
 
