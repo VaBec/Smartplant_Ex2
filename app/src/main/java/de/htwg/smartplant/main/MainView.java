@@ -9,30 +9,27 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.List;
 
 import de.htwg.smartplant.R;
+import de.htwg.smartplant.Utils;
 import de.htwg.smartplant.main.recycler.adapters.TabsPagerAdapter;
+import de.htwg.smartplant.main.recycler.fragments.ManagePlantsFragment;
+import de.htwg.smartplant.main.recycler.fragments.YourPlantsFragment;
 import de.htwg.smartplant.rest.jsonmodels.Plant;
 import de.htwg.smartplant.rest.jsonmodels.User;
 import de.htwg.smartplant.start.StartView;
-import de.htwg.smartplant.main.datapoller.DataPoller;
-import de.htwg.smartplant.main.recycler.fragments.ManagePlantsFragment;
-import de.htwg.smartplant.main.recycler.fragments.YourPlantsFragment;
 
 public class MainView extends AppCompatActivity implements MainPresenter.IMainActivity {
 
-    private TabLayout tablayout;
-    private ViewPager viewPager;
-    private TabsPagerAdapter tabsPagerAdapter;
     private MainPresenter mainPresenter;
     private User user;
-    private DataPoller dataPoller;
+
+    private TabLayout tablayout;
+    private ViewPager viewPager;
+
+    private TabsPagerAdapter tabsPagerAdapter;
     private YourPlantsFragment yourPlantsFragment;
     private ManagePlantsFragment managePlantsFragment;
 
@@ -44,7 +41,15 @@ public class MainView extends AppCompatActivity implements MainPresenter.IMainAc
         mainPresenter = new MainPresenter(this, this.getApplicationContext(), this.user);
         setupTabs();
         hideKeyBoard();
-        startPollingTask();
+        mainPresenter.startPollingTask(yourPlantsFragment, managePlantsFragment, this);
+    }
+
+    void hideKeyBoard() {
+        InputMethodManager imm = (InputMethodManager)
+                this.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        View view = findViewById(android.R.id.content);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override
@@ -65,15 +70,7 @@ public class MainView extends AppCompatActivity implements MainPresenter.IMainAc
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        this.dataPoller.stopPolling();
-    }
-
-    void hideKeyBoard() {
-        InputMethodManager imm = (InputMethodManager)
-                this.getSystemService(Context.INPUT_METHOD_SERVICE);
-
-        View view = findViewById(android.R.id.content);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        this.mainPresenter.stopPolling();
     }
 
     @Override
@@ -93,15 +90,9 @@ public class MainView extends AppCompatActivity implements MainPresenter.IMainAc
         tablayout.setupWithViewPager(viewPager);
     }
 
-    private void startPollingTask() {
-        this.dataPoller = new DataPoller(yourPlantsFragment, managePlantsFragment, this.user.getUserName(), this);
-        this.dataPoller.startPolling();
-    }
-
     @Override
-    public void showToast(String text, int toastLength) {
-        Toast toast = Toast.makeText(getApplicationContext(), text, toastLength);
-        toast.show();
+    public void showToast(String text) {
+        Utils.showToast(this.getApplicationContext(), text);
     }
 
     @Override
@@ -109,7 +100,12 @@ public class MainView extends AppCompatActivity implements MainPresenter.IMainAc
         YourPlantsFragment yourPlantsFragment = (YourPlantsFragment) tabsPagerAdapter.getItem(0);
         ManagePlantsFragment managePlantsFragment = (ManagePlantsFragment) tabsPagerAdapter.getItem(1);
 
-        yourPlantsFragment.addPlantsData(plants, this.user.getUserName(), this.user.getPassWord());
+        yourPlantsFragment.addPlantsData(plants, this.user.getUserName());
         managePlantsFragment.addPlantsData(plants, this.user.getUserName(), this.user.getPassWord(), yourPlantsFragment);
+    }
+
+    @Override
+    public Context getContext() {
+        return getApplicationContext();
     }
 }

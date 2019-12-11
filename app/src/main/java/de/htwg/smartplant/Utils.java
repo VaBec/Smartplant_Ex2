@@ -1,6 +1,8 @@
 package de.htwg.smartplant;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.widget.Toast;
 
 import com.loopj.android.http.RequestParams;
@@ -44,5 +46,13 @@ public class Utils {
             case 9: return R.drawable.carrot;
             default : return R.drawable.plant;
         }
+    }
+
+    public static boolean isOnline(Context context) {
+        ConnectivityManager cm = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }

@@ -40,8 +40,4 @@ public class ManagePlantsFragment extends Fragment {
         recyclerView.setAdapter(plantsManagedAdapter);
         plantsManagedAdapter.notifyDataSetChanged();
     }
-
-    public ManagePlantsAdapter getPlantManageAdapter() {
-        return plantsManagedAdapter;
-    }
 }

@@ -1,6 +1,5 @@
 package de.htwg.smartplant.main.recycler.adapters;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -20,15 +19,9 @@ import de.htwg.smartplant.rest.jsonmodels.Plant;
 
 public class YourPlantsAdapter extends RecyclerView.Adapter<YourPlantsAdapter.PlantsViewHolder> {
 
-    private final Activity activity;
     private String userName;
-    private String password;
 
     private List<Plant> plantDetailObjectModels;
-
-    public void updateData(List<Plant> plants) {
-        this.plantDetailObjectModels = plants;
-    }
 
     public static class PlantsViewHolder extends RecyclerView.ViewHolder {
         public View view;
@@ -49,16 +42,9 @@ public class YourPlantsAdapter extends RecyclerView.Adapter<YourPlantsAdapter.Pl
         }
     }
 
-    public YourPlantsAdapter(List<Plant> plantDetailObjectModels, Activity activity,
-                             String userName, String password) {
+    public YourPlantsAdapter(List<Plant> plantDetailObjectModels, String userName) {
         this.plantDetailObjectModels = plantDetailObjectModels;
-        this.activity = activity;
         this.userName = userName;
-        this.password = password;
-    }
-
-    public void removeFromList(int index) {
-        this.plantDetailObjectModels.remove(index);
     }
 
     @NonNull

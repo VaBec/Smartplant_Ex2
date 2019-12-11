@@ -12,14 +12,10 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import de.htwg.smartplant.R;
-import de.htwg.smartplant.rest.jsonmodels.Plant;
-import de.htwg.smartplant.main.MainPresenter;
 import de.htwg.smartplant.main.recycler.adapters.YourPlantsAdapter;
+import de.htwg.smartplant.rest.jsonmodels.Plant;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class YourPlantsFragment extends Fragment implements MainPresenter.IPlantsView {
+public class YourPlantsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     YourPlantsAdapter yourPlantsAdapter;
@@ -40,8 +36,8 @@ public class YourPlantsFragment extends Fragment implements MainPresenter.IPlant
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
-    public void addPlantsData(List<Plant> plants, String userName, String password) {
-        yourPlantsAdapter = new YourPlantsAdapter(plants, getActivity(), userName, password);
+    public void addPlantsData(List<Plant> plants, String userName) {
+        yourPlantsAdapter = new YourPlantsAdapter(plants, userName);
         recyclerView.setAdapter(yourPlantsAdapter);
         yourPlantsAdapter.notifyDataSetChanged();
     }

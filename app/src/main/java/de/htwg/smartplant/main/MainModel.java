@@ -1,26 +1,37 @@
 package de.htwg.smartplant.main;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.htwg.smartplant.Utils;
 import de.htwg.smartplant.rest.HttpManager;
+import de.htwg.smartplant.rest.HttpNotifier;
+import de.htwg.smartplant.rest.jsonmodels.Plant;
 import de.htwg.smartplant.rest.jsonmodels.User;
 
 import static de.htwg.smartplant.rest.HttpManager.RequestType.DELETE;
 
-public class MainModel {
+public class MainModel implements HttpNotifier {
+
+    private final int SLEEP_TIME = 250;
+    private List<Plant> oldPlants = new ArrayList<>();
 
     private final User user;
-    private final Context context;
+    private final MainPresenter.IMainActivity mainActivity;
     private final MainPresenter mainPresenter;
+    private Thread pollingThread;
 
-    public MainModel(MainPresenter mainPresenter, User user, Context context) {
+    public MainModel(MainPresenter mainPresenter, User user, MainPresenter.IMainActivity mainActivity) {
         this.mainPresenter = mainPresenter;
-        this.context = context;
+        this.mainActivity = mainActivity;
         this.user = user;
     }
 
@@ -32,23 +43,59 @@ public class MainModel {
             deleteUserJson.put("username", user.getUserName());
             deleteUserJson.put("password", user.getPassWord());
 
-            HttpManager.sendHtppRequest(DELETE, deleteUserJson, HttpManager.RequestUrl.LOGIN.create(), mainPresenter, context);
+            HttpManager.sendHtppRequest(DELETE, deleteUserJson, HttpManager.RequestUrl.LOGIN.create(), mainPresenter, this.mainActivity.getContext());
         } catch(Exception e) {
             mainPresenter.showException(e);
         }
     }
 
-    public void getUserPlants(User user){
-        Utils.requestPlants(user.getUserName(), context, mainPresenter);
+    public void startPollingTask() {
+        this.pollingThread = new Thread(() -> {
+            while (true) {
+                try {
+                    Handler refresh = new Handler(Looper.getMainLooper());
+                    refresh.post(() -> requestPlants());
+                    Thread.sleep(SLEEP_TIME);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        });
+
+        pollingThread.start();
     }
 
-    public boolean isOnline() {
-        ConnectivityManager cm = (ConnectivityManager)
-                context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-            return true;
+    public void stopPollingTask() {
+        if(this.pollingThread != null && !this.pollingThread.isInterrupted()) {
+            this.pollingThread.interrupt();
         }
-        return false;
     }
+
+    private void requestPlants() {
+        Utils.requestPlants(this.user.getUserName(), this.mainActivity.getContext(), this);
+    }
+
+    @Override public void showRetry() { }
+
+    @Override
+    public void showFailure(String errorResponse) {
+        this.mainActivity.showToast(errorResponse);
+    }
+
+    @Override
+    public void showSuccess(JSONObject response) {
+        try {
+            JSONArray plants = (JSONArray) response.get("payload");
+            List<Plant> newPlants = Plant.createPlantListFromJSON(plants);
+
+            if(newPlants.size() != oldPlants.size()) {
+                mainActivity.setPlants(newPlants);
+                oldPlants = newPlants;
+            }
+        } catch(Exception e){
+            this.mainActivity.showToast(e.getMessage());
+        }
+    }
+
+    @Override public void showStart(){}
 }
