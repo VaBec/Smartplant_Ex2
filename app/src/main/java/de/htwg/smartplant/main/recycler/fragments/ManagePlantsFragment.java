@@ -1,6 +1,5 @@
-package de.htwg.smartplant.main.fragments;
+package de.htwg.smartplant.main.recycler.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,21 +11,19 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import de.htwg.smartplant.R;
-import de.htwg.smartplant.jsonmodels.Plant;
-import de.htwg.smartplant.main.recycler.ManagePlantsAdapter;
+import de.htwg.smartplant.rest.jsonmodels.Plant;
+import de.htwg.smartplant.main.recycler.adapters.ManagePlantsAdapter;
 
-public class HandlePlantsFragment extends Fragment {
-    private Activity activity;
+public class ManagePlantsFragment extends Fragment {
+
     private View view;
     private RecyclerView recyclerView;
     private ManagePlantsAdapter plantsManagedAdapter;
 
-    public HandlePlantsFragment() { }
+    public ManagePlantsFragment() { }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_analyse, container, false);
         setUpRecycler(view);
         return view;

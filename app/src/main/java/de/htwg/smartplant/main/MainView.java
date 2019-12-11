@@ -7,7 +7,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -15,26 +14,38 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.List;
 
 import de.htwg.smartplant.R;
-import de.htwg.smartplant.jsonmodels.Plant;
-import de.htwg.smartplant.login.LoginView;
+import de.htwg.smartplant.main.recycler.adapters.TabsPagerAdapter;
+import de.htwg.smartplant.rest.jsonmodels.Plant;
+import de.htwg.smartplant.rest.jsonmodels.User;
+import de.htwg.smartplant.start.StartView;
 import de.htwg.smartplant.main.datapoller.DataPoller;
-import de.htwg.smartplant.main.fragments.HandlePlantsFragment;
-import de.htwg.smartplant.main.fragments.YourPlantsFragment;
+import de.htwg.smartplant.main.recycler.fragments.ManagePlantsFragment;
+import de.htwg.smartplant.main.recycler.fragments.YourPlantsFragment;
 
-public class MainActivity extends AppCompatActivity implements MainPresenter.IMainActivity {
+public class MainView extends AppCompatActivity implements MainPresenter.IMainActivity {
 
     private TabLayout tablayout;
     private ViewPager viewPager;
     private TabsPagerAdapter tabsPagerAdapter;
     private MainPresenter mainPresenter;
-    private String userName;
-    private String password;
+    private User user;
     private DataPoller dataPoller;
+    private YourPlantsFragment yourPlantsFragment;
+    private ManagePlantsFragment managePlantsFragment;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.user = (User) this.getIntent().getExtras().get("user");
+        setContentView(R.layout.activity_main);
+        mainPresenter = new MainPresenter(this, this.getApplicationContext(), this.user);
+        setupTabs();
+        hideKeyBoard();
+        startPollingTask();
+    }
 
     @Override
     public void onBackPressed() {
@@ -43,25 +54,12 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
                 .setMessage("Wirklich ausloggen?")
                 .setPositiveButton("Ja", (dialog, which) -> {
                     finish();
-                    Intent loginView = new Intent(MainActivity.this, LoginView.class);
+                    Intent loginView = new Intent(MainView.this, StartView.class);
                     startActivity(loginView);
                 })
                 .setNegativeButton("Nein", null)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .show();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Intent intent = this.getIntent();
-        this.userName = intent.getStringExtra("username");
-        this.password = intent.getStringExtra("password");
-
-        setContentView(R.layout.activity_main);
-        mainPresenter = new MainPresenter(this, this.getApplicationContext(), this.userName);
-        setupTabs();
-        hideKeyBoard();
     }
 
     @Override
@@ -85,23 +83,19 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
         viewPager = findViewById(R.id.view_pager);
         tabsPagerAdapter = new TabsPagerAdapter(getSupportFragmentManager());
 
-        try {
-            getPlants();
-            tabsPagerAdapter.AddFragment(new YourPlantsFragment(), getString(R.string.tab_text_1) );
-            tabsPagerAdapter.AddFragment(new HandlePlantsFragment(), getString(R.string.tab_text_2));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        this.yourPlantsFragment = new YourPlantsFragment();
+        this.managePlantsFragment = new ManagePlantsFragment();
+
+        tabsPagerAdapter.AddFragment(yourPlantsFragment, getString(R.string.tab_text_1) );
+        tabsPagerAdapter.AddFragment(managePlantsFragment, getString(R.string.tab_text_2));
 
         viewPager.setAdapter(tabsPagerAdapter);
         tablayout.setupWithViewPager(viewPager);
     }
 
-    @Override
-    public void getPlants() throws UnsupportedEncodingException, JSONException {
-        mainPresenter.getPlants();
+    private void startPollingTask() {
+        this.dataPoller = new DataPoller(yourPlantsFragment, managePlantsFragment, this.user.getUserName(), this);
+        this.dataPoller.startPolling();
     }
 
     @Override
@@ -111,22 +105,11 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.IMa
     }
 
     @Override
-    public void updatePlantsData(JSONArray plantData) {
-        List<Plant> plants = new ArrayList<>();
-
-        try {
-            Plant.createPlantListFromJSON(plantData);
-        } catch(Exception e) {
-            Log.d("MainActivity", e.getMessage());
-        }
-
+    public void setPlants(List<Plant> plants) {
         YourPlantsFragment yourPlantsFragment = (YourPlantsFragment) tabsPagerAdapter.getItem(0);
-        HandlePlantsFragment handlePlantsFragment = (HandlePlantsFragment) tabsPagerAdapter.getItem(1);
+        ManagePlantsFragment managePlantsFragment = (ManagePlantsFragment) tabsPagerAdapter.getItem(1);
 
-        yourPlantsFragment.addPlantsData(plants, this.userName, this.password);
-        handlePlantsFragment.addPlantsData(plants, this.userName, this.password, yourPlantsFragment);
-        
-        this.dataPoller = new DataPoller(yourPlantsFragment, handlePlantsFragment, this.userName, this);
-        this.dataPoller.startPolling();
+        yourPlantsFragment.addPlantsData(plants, this.user.getUserName(), this.user.getPassWord());
+        managePlantsFragment.addPlantsData(plants, this.user.getUserName(), this.user.getPassWord(), yourPlantsFragment);
     }
 }

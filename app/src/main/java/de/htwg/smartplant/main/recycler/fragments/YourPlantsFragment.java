@@ -1,4 +1,4 @@
-package de.htwg.smartplant.main.fragments;
+package de.htwg.smartplant.main.recycler.fragments;
 
 
 import android.os.Bundle;
@@ -12,9 +12,9 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import de.htwg.smartplant.R;
-import de.htwg.smartplant.jsonmodels.Plant;
+import de.htwg.smartplant.rest.jsonmodels.Plant;
 import de.htwg.smartplant.main.MainPresenter;
-import de.htwg.smartplant.main.recycler.YourPlantsAdapter;
+import de.htwg.smartplant.main.recycler.adapters.YourPlantsAdapter;
 
 /**
  * A simple {@link Fragment} subclass.

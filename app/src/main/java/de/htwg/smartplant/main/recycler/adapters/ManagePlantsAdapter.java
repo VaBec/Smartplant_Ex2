@@ -1,4 +1,4 @@
-package de.htwg.smartplant.main.recycler;
+package de.htwg.smartplant.main.recycler.adapters;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
@@ -21,11 +21,12 @@ import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.protocol.HTTP;
 import de.htwg.smartplant.R;
-import de.htwg.smartplant.jsonmodels.Plant;
+import de.htwg.smartplant.Utils;
+import de.htwg.smartplant.rest.jsonmodels.Plant;
 import de.htwg.smartplant.rest.HttpNotifier;
-import de.htwg.smartplant.rest.RequestHandler;
+import de.htwg.smartplant.rest.HttpManager;
 
-import static de.htwg.smartplant.rest.RequestHandler.BASE_URL;
+import static de.htwg.smartplant.rest.HttpManager.BASE_URL;
 
 public class ManagePlantsAdapter extends RecyclerView.Adapter<ManagePlantsAdapter.PlantManageViewHolder> {
 
@@ -81,9 +82,7 @@ public class ManagePlantsAdapter extends RecyclerView.Adapter<ManagePlantsAdapte
 
     @Override
     public void onBindViewHolder(@NonNull PlantManageViewHolder plantsViewHolder, int i) {
-        final int index = i >= plantDetailObjectModels.size() ? plantDetailObjectModels.size() - 1 : i;
-
-        int image = getImageOfPlant(plantDetailObjectModels.get(i).getPlantType());
+        int image = Utils.getImageOfPlant(plantDetailObjectModels.get(i).getPlantType());
 
         plantsViewHolder.macLabel.setText("MAC: " + plantDetailObjectModels.get(i).getMac());
         plantsViewHolder.plantImage.setImageResource(image);
@@ -93,7 +92,7 @@ public class ManagePlantsAdapter extends RecyclerView.Adapter<ManagePlantsAdapte
                     .setTitle("Löschen")
                     .setMessage("Wirklich löschen?")
                     .setPositiveButton("Ja", (dialog, which) -> deletePlant(
-                            plantDetailObjectModels.get(index).getId(), userName, password, i
+                            plantDetailObjectModels.get(i).getId(), userName, password, i
                     ))
                     .setNegativeButton("Nein", null)
                     .setIcon(android.R.drawable.ic_dialog_alert)
@@ -120,23 +119,22 @@ public class ManagePlantsAdapter extends RecyclerView.Adapter<ManagePlantsAdapte
 
             String url = BASE_URL + "deleteplant";
             client.delete(this.activity.getApplicationContext(), url,
-                    entity,"application/json", new RequestHandler(new HttpNotifier() {
+                    entity,"application/json", new HttpManager(new HttpNotifier() {
                         @Override
                         public void showRetry() {
                             int db = 3;
                         }
 
                         @Override
-                        public void showFailure(JSONObject response) {
+                        public void showFailure(String response) {
                             int db = 3;
                         }
 
                         @Override
                         public void showSuccess(JSONObject response) {
                             plantDetailObjectModels.remove(deletedIndex);
-                            notifyItemRemoved(deletedIndex);
 
-                            yourPlantsAdapter.removeFromList(deletedIndex);
+                            notifyItemRemoved(deletedIndex);
                             yourPlantsAdapter.notifyItemRemoved(deletedIndex);
                         }
 
@@ -147,22 +145,6 @@ public class ManagePlantsAdapter extends RecyclerView.Adapter<ManagePlantsAdapte
                     }));
         } catch(Exception e) {
 
-        }
-    }
-
-    private int getImageOfPlant(Integer plantType) {
-        switch(plantType) {
-            case 0: return R.drawable.strawberry;
-            case 1: return R.drawable.raspberry;
-            case 2: return R.drawable.cactus;
-            case 3: return R.drawable.potatoe;
-            case 4: return R.drawable.tomato;
-            case 5: return R.drawable.onion;
-            case 6: return R.drawable.coal;
-            case 7: return R.drawable.cucumber;
-            case 8: return R.drawable.grape;
-            case 9: return R.drawable.carrot;
-            default : return R.drawable.plant;
         }
     }
 

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/plant_background"
     android:orientation="vertical"
-    tools:context=".main.MainActivity">
+    tools:context=".main.MainView">
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tabs"

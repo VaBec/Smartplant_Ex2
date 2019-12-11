@@ -1,4 +1,4 @@
-package de.htwg.smartplant.jsonmodels;
+package de.htwg.smartplant.rest.jsonmodels;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -17,10 +17,10 @@
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".main.MainActivity"
+            android:name=".main.MainView"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".login.LoginView">
+        <activity android:name=".start.StartView">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

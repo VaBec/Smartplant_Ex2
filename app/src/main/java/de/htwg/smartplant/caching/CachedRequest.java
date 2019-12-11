@@ -4,9 +4,8 @@ import java.util.Map;
 
 public class CachedRequest {
 
-    private String url = "";
-    private Map<String,String> requestParams = null;
-    private Map<String,String> headers = null;
+    private String url;
+    private Map<String,String> requestParams;
 
     public String getUrl() {
         return url;
@@ -16,13 +15,8 @@ public class CachedRequest {
         return requestParams;
     }
 
-    public Map<String, String> getHeaders() {
-        return headers;
-    }
-
-    public CachedRequest(Map<String, String> requestParam, String url, Map<String,String> headers){
+    public CachedRequest(Map<String, String> requestParam, String url){
         this.url = url;
-        this.headers = headers;
         this.requestParams = requestParam;
     }
 }

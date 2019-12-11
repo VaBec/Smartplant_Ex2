@@ -1,4 +1,4 @@
-package de.htwg.smartplant.login;
+package de.htwg.smartplant.start;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,14 +11,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import de.htwg.smartplant.R;
-import de.htwg.smartplant.main.MainActivity;
+import de.htwg.smartplant.Utils;
+import de.htwg.smartplant.rest.jsonmodels.User;
+import de.htwg.smartplant.main.MainView;
 
-public class LoginView extends AppCompatActivity implements LoginPresenter.ILoginView {
+public class StartView extends AppCompatActivity implements StartPresenter.ILoginView {
 
-    private LoginPresenter loginPresenter;
+    private StartPresenter startPresenter;
 
     private Button loginButton;
     private Button registerButton;
@@ -48,22 +49,22 @@ public class LoginView extends AppCompatActivity implements LoginPresenter.ILogi
         initGuiFields();
         setUpLoginGui();
         setListeners();
-        loginPresenter = new LoginPresenter(this, this.getApplicationContext());
+        startPresenter = new StartPresenter(this, this.getApplicationContext());
     }
 
     private void setListeners() {
         loginButton.setOnClickListener(v ->
-                loginPresenter.loginUser(loginNameEditText.getText().toString(), passwordEditText.getText().toString()));
+                startPresenter.loginUser(loginNameEditText.getText().toString(), passwordEditText.getText().toString()));
 
         registerButton.setOnClickListener(v ->
-                loginPresenter.registerUser
+                startPresenter.registerUser
                         (registerNameText.getText().toString(), registerPassword1.getText().toString(), registerPassword2.getText().toString()));
 
         registerLink.setOnClickListener(v ->
-                loginPresenter.register());
+                startPresenter.register());
 
         loginLink.setOnClickListener(v ->
-                loginPresenter.login());
+                startPresenter.login());
     }
 
     private void initGuiFields() {
@@ -95,17 +96,14 @@ public class LoginView extends AppCompatActivity implements LoginPresenter.ILogi
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // Hide keyboard on any touch on the activity for better ux
         hideKeyboard();
-
         return true;
     }
 
     @Override
-    public void startMainActivity(String name, String password) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("username", name);
-        intent.putExtra("password", password);
+    public void startMainActivity(User user) {
+        Intent intent = new Intent(this, MainView.class);
+        intent.putExtra("user", user);
         startActivity(intent);
     }
 
@@ -144,7 +142,6 @@ public class LoginView extends AppCompatActivity implements LoginPresenter.ILogi
 
     @Override
     public void hideKeyboard() {
-        // Hide keyboard for better UX
         InputMethodManager imm = (InputMethodManager)
                 this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -187,9 +184,7 @@ public class LoginView extends AppCompatActivity implements LoginPresenter.ILogi
     }
 
     @Override
-    public void showToast(String text, int toastLength) {
-        Toast toast = Toast.makeText(getApplicationContext(), text, toastLength);
-
-        toast.show();
+    public void showToast(String text) {
+        Utils.showToast(getApplicationContext(), text);
     }
 }
