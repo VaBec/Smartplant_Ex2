@@ -83,6 +83,9 @@ public class MainView extends AppCompatActivity implements MainPresenter.IMainAc
         this.yourPlantsFragment = new YourPlantsFragment();
         this.managePlantsFragment = new ManagePlantsFragment();
 
+        yourPlantsFragment.setMainView(this);
+        managePlantsFragment.setMainView(this);
+
         tabsPagerAdapter.AddFragment(yourPlantsFragment, getString(R.string.tab_text_1) );
         tabsPagerAdapter.AddFragment(managePlantsFragment, getString(R.string.tab_text_2));
 
@@ -101,11 +104,19 @@ public class MainView extends AppCompatActivity implements MainPresenter.IMainAc
         ManagePlantsFragment managePlantsFragment = (ManagePlantsFragment) tabsPagerAdapter.getItem(1);
 
         yourPlantsFragment.addPlantsData(plants, this.user.getUserName());
-        managePlantsFragment.addPlantsData(plants, this.user.getUserName(), this.user.getPassWord(), yourPlantsFragment);
+        managePlantsFragment.addPlantsData(plants, this.user, yourPlantsFragment);
     }
 
     @Override
     public Context getContext() {
         return getApplicationContext();
     }
+
+    @Override
+    public AppCompatActivity getActivity() {
+        return this;
+    }
+
+    @Override
+    public MainPresenter getMainPresenter() { return this.mainPresenter; }
 }

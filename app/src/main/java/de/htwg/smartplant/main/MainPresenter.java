@@ -1,6 +1,7 @@
 package de.htwg.smartplant.main;
 
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,6 +66,8 @@ public class MainPresenter implements HttpNotifier {
         void setupTabs();
         void showToast(String message);
         void setPlants(List<Plant> plants);
+        MainPresenter getMainPresenter();
         Context getContext();
+        AppCompatActivity getActivity();
     }
 }

@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import de.htwg.smartplant.R;
+import de.htwg.smartplant.main.MainPresenter;
+import de.htwg.smartplant.main.MainView;
 import de.htwg.smartplant.main.recycler.adapters.YourPlantsAdapter;
 import de.htwg.smartplant.rest.jsonmodels.Plant;
 
@@ -19,6 +21,7 @@ public class YourPlantsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     YourPlantsAdapter yourPlantsAdapter;
+    private MainPresenter.IMainActivity mainView;
 
     public YourPlantsFragment() { }
 
@@ -44,5 +47,9 @@ public class YourPlantsFragment extends Fragment {
 
     public YourPlantsAdapter getYourPlantsAdapter() {
         return yourPlantsAdapter;
+    }
+
+    public void setMainView(MainPresenter.IMainActivity mainView) {
+        this.mainView = mainView;
     }
 }
