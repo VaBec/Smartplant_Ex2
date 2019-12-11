@@ -1,9 +1,7 @@
 package de.htwg.smartplant.main;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -43,7 +41,7 @@ public class MainModel implements HttpNotifier {
             deleteUserJson.put("username", user.getUserName());
             deleteUserJson.put("password", user.getPassWord());
 
-            HttpManager.sendHtppRequest(DELETE, deleteUserJson, HttpManager.RequestUrl.LOGIN.create(), mainPresenter, this.mainActivity.getContext());
+            HttpManager.sendHtppRequest(DELETE, deleteUserJson, HttpManager.RequestUrl.DELETEPLANT.create(), mainPresenter, this.mainActivity.getContext());
         } catch(Exception e) {
             mainPresenter.showException(e);
         }

@@ -44,6 +44,14 @@ public class MainPresenter implements HttpNotifier {
         this.mainActivity.showToast(errorMessage);
     }
 
+    /*
+    plants.remove(deletedIndex);
+
+    notifyItemRemoved(deletedIndex);
+                            yourPlantsAdapter.notifyItemRemoved(deletedIndex);
+    */
+
+
     @Override
     public void showSuccess(JSONObject response) {
         String text;
@@ -60,6 +68,10 @@ public class MainPresenter implements HttpNotifier {
 
     public void stopPolling() {
         this.mainModel.stopPollingTask();
+    }
+
+    public void sendDeletePlantRequest(String id) {
+        this.mainModel.sendDeletePlantRequest(id);
     }
 
     public interface IMainActivity{

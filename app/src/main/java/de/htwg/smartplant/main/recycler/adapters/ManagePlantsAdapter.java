@@ -83,9 +83,7 @@ public class ManagePlantsAdapter extends RecyclerView.Adapter<ManagePlantsAdapte
             new AlertDialog.Builder(mainActivity.getActivity())
                     .setTitle("Löschen")
                     .setMessage("Wirklich löschen?")
-                    .setPositiveButton("Ja", (dialog, which) -> deletePlant(
-                            plants.get(i).getId(), user.getUserName(), user.getPassWord(), i
-                    ))
+                    .setPositiveButton("Ja", (dialog, which) -> deletePlant(plants.get(i).getId(), i))
                     .setNegativeButton("Nein", null)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
@@ -96,49 +94,12 @@ public class ManagePlantsAdapter extends RecyclerView.Adapter<ManagePlantsAdapte
         });
     }
 
-    private void deletePlant(String id, String userName, String password, int deletedIndex) {
-        this.mainActivity.getMainPresenter();
-        try {
-            JSONObject deletePlantJson = new JSONObject();
+    private void deletePlant(String id, int deletedIndex) {
+        this.mainActivity.getMainPresenter().sendDeletePlantRequest(id);
 
-            deletePlantJson.put("id", id);
-            deletePlantJson.put("username", userName);
-            deletePlantJson.put("password", password);
-
-            StringEntity entity = new StringEntity(deletePlantJson.toString());
-            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-            AsyncHttpClient client = new AsyncHttpClient();
-            client.setMaxRetriesAndTimeout(1, 5000);
-
-            String url = BASE_URL + "deleteplant";
-            client.delete(this.mainActivity.getContext(), url,
-                    entity,"application/json", new HttpManager(new HttpNotifier() {
-                        @Override
-                        public void showRetry() {
-                            int db = 3;
-                        }
-
-                        @Override
-                        public void showFailure(String response) {
-                            int db = 3;
-                        }
-
-                        @Override
-                        public void showSuccess(JSONObject response) {
-                            plants.remove(deletedIndex);
-
-                            notifyItemRemoved(deletedIndex);
-                            yourPlantsAdapter.notifyItemRemoved(deletedIndex);
-                        }
-
-                        @Override
-                        public void showStart() {
-                            int db = 3;
-                        }
-                    }));
-        } catch(Exception e) {
-
-        }
+        plants.remove(deletedIndex);
+        notifyItemRemoved(deletedIndex);
+        yourPlantsAdapter.notifyItemRemoved(deletedIndex);
     }
 
     @Override
