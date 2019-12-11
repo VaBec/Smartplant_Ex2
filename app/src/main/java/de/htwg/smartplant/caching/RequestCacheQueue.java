@@ -8,7 +8,7 @@ public class RequestCacheQueue {
     private List<CachedRequest> requests;
 
     public RequestCacheQueue() {
-        requests = new ArrayList<CachedRequest>();
+        requests = new ArrayList<>();
     }
     public void addRequest(CachedRequest request) {
         requests.add(request);

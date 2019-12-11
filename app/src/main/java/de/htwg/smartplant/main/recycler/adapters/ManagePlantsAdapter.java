@@ -1,4 +1,4 @@
-package de.htwg.smartplant.main.recycler;
+package de.htwg.smartplant.main.recycler.adapters;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
@@ -16,33 +16,32 @@ import com.loopj.android.http.AsyncHttpClient;
 import org.json.JSONObject;
 
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.protocol.HTTP;
 import de.htwg.smartplant.R;
-import de.htwg.smartplant.plantdetail.PlantDetailObjectModel;
+import de.htwg.smartplant.Utils;
+import de.htwg.smartplant.rest.jsonmodels.Plant;
 import de.htwg.smartplant.rest.HttpNotifier;
-import de.htwg.smartplant.rest.RequestHandler;
+import de.htwg.smartplant.rest.HttpManager;
 
-import static de.htwg.smartplant.rest.RequestHandler.BASE_URL;
+import static de.htwg.smartplant.rest.HttpManager.BASE_URL;
 
-public class PlantManageAdapter extends RecyclerView.Adapter<PlantManageAdapter.PlantManageViewHolder> {
+public class ManagePlantsAdapter extends RecyclerView.Adapter<ManagePlantsAdapter.PlantManageViewHolder> {
 
     private final Activity activity;
-    private final PlantsAdapter plantsAdapter;
+    private final YourPlantsAdapter yourPlantsAdapter;
 
-    private List<PlantDetailObjectModel> plantDetailObjectModels;
+    private List<Plant> plantDetailObjectModels;
     private String userName;
     private String password;
 
-    public List<PlantDetailObjectModel> getPlants() {
+    public List<Plant> getPlants() {
         return plantDetailObjectModels;
     }
 
-    public void updateData(List<PlantDetailObjectModel> plants) {
+    public void updateData(List<Plant> plants) {
         this.plantDetailObjectModels = plants;
     }
 
@@ -64,13 +63,13 @@ public class PlantManageAdapter extends RecyclerView.Adapter<PlantManageAdapter.
         }
     }
 
-    public PlantManageAdapter(List<PlantDetailObjectModel> plantDetailObjectModels, Activity activity,
-                              String userName, String password, PlantsAdapter plantsAdapter) {
+    public ManagePlantsAdapter(List<Plant> plantDetailObjectModels, Activity activity,
+                               String userName, String password, YourPlantsAdapter yourPlantsAdapter) {
         this.plantDetailObjectModels = plantDetailObjectModels;
         this.activity = activity;
         this.userName = userName;
         this.password = password;
-        this.plantsAdapter = plantsAdapter;
+        this.yourPlantsAdapter = yourPlantsAdapter;
     }
 
     @NonNull
@@ -83,9 +82,7 @@ public class PlantManageAdapter extends RecyclerView.Adapter<PlantManageAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull PlantManageViewHolder plantsViewHolder, int i) {
-        final int index = i >= plantDetailObjectModels.size() ? plantDetailObjectModels.size() - 1 : i;
-
-        int image = getImageOfPlant(plantDetailObjectModels.get(i).getPlantType());
+        int image = Utils.getImageOfPlant(plantDetailObjectModels.get(i).getPlantType());
 
         plantsViewHolder.macLabel.setText("MAC: " + plantDetailObjectModels.get(i).getMac());
         plantsViewHolder.plantImage.setImageResource(image);
@@ -95,7 +92,7 @@ public class PlantManageAdapter extends RecyclerView.Adapter<PlantManageAdapter.
                     .setTitle("Löschen")
                     .setMessage("Wirklich löschen?")
                     .setPositiveButton("Ja", (dialog, which) -> deletePlant(
-                            plantDetailObjectModels.get(index).getId(), userName, password, i
+                            plantDetailObjectModels.get(i).getId(), userName, password, i
                     ))
                     .setNegativeButton("Nein", null)
                     .setIcon(android.R.drawable.ic_dialog_alert)
@@ -122,24 +119,23 @@ public class PlantManageAdapter extends RecyclerView.Adapter<PlantManageAdapter.
 
             String url = BASE_URL + "deleteplant";
             client.delete(this.activity.getApplicationContext(), url,
-                    entity,"application/json", new RequestHandler(new HttpNotifier() {
+                    entity,"application/json", new HttpManager(new HttpNotifier() {
                         @Override
                         public void showRetry() {
                             int db = 3;
                         }
 
                         @Override
-                        public void showFailure(JSONObject response) {
+                        public void showFailure(String response) {
                             int db = 3;
                         }
 
                         @Override
                         public void showSuccess(JSONObject response) {
                             plantDetailObjectModels.remove(deletedIndex);
-                            notifyItemRemoved(deletedIndex);
 
-                            plantsAdapter.removeFromList(deletedIndex);
-                            plantsAdapter.notifyItemRemoved(deletedIndex);
+                            notifyItemRemoved(deletedIndex);
+                            yourPlantsAdapter.notifyItemRemoved(deletedIndex);
                         }
 
                         @Override
@@ -149,22 +145,6 @@ public class PlantManageAdapter extends RecyclerView.Adapter<PlantManageAdapter.
                     }));
         } catch(Exception e) {
 
-        }
-    }
-
-    private int getImageOfPlant(Integer plantType) {
-        switch(plantType) {
-            case 0: return R.drawable.strawberry;
-            case 1: return R.drawable.raspberry;
-            case 2: return R.drawable.cactus;
-            case 3: return R.drawable.potatoe;
-            case 4: return R.drawable.tomato;
-            case 5: return R.drawable.onion;
-            case 6: return R.drawable.coal;
-            case 7: return R.drawable.cucumber;
-            case 8: return R.drawable.grape;
-            case 9: return R.drawable.carrot;
-            default : return R.drawable.plant;
         }
     }
 
