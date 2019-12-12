@@ -70,7 +70,7 @@ public class MainModel implements HttpNotifier {
     }
 
     private void requestPlants() {
-        Utils.requestPlants(this.user.getUserName(), this.mainActivity.getContext(), this);
+        HttpManager.requestPlants(this.user.getUserName(), this.mainActivity.getContext(), this);
     }
 
     @Override public void showRetry() { }

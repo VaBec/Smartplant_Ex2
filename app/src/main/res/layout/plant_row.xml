@@ -15,12 +15,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/plant_row_watervalue_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Wasserstand:" />
-
         <ProgressBar
             android:id="@+id/plant_row_watervalue"
             style="?android:attr/progressBarStyleHorizontal"
@@ -33,6 +27,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="MAC:" />
+
+        <TextView
+            android:id="@+id/dateLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Stand vom: " />
 
     </LinearLayout>
 </LinearLayout>
