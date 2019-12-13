@@ -5,12 +5,15 @@ import android.os.Looper;
 
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import de.htwg.smartplant.Storage;
 import de.htwg.smartplant.rest.HttpManager;
+import de.htwg.smartplant.rest.HttpNotifier;
 import de.htwg.smartplant.rest.jsonmodels.Plant;
 import de.htwg.smartplant.rest.jsonmodels.User;
+import de.htwg.smartplant.rest.jsonmodels.Water;
 
 import static de.htwg.smartplant.rest.HttpManager.RequestType.DELETE;
 
@@ -77,6 +80,15 @@ public class MainModel {
     public void stopPollingTask() {
         if(this.pollingThread != null && !this.pollingThread.isInterrupted()) {
             this.pollingThread.interrupt();
+        }
+    }
+
+    public void sendWateringRequest(String mac) {
+        try {
+            HttpManager.sendHtppRequest(HttpManager.RequestType.POST, new Water(mac).toJson(),
+                    HttpManager.RequestUrl.ADD.create(), this.mainPresenter, this.mainActivity.getContext());
+        } catch (UnsupportedEncodingException e) {
+            this.mainPresenter.showException(e);
         }
     }
 

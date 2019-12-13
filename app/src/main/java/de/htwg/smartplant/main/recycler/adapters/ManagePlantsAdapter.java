@@ -84,10 +84,11 @@ public class ManagePlantsAdapter extends RecyclerView.Adapter<ManagePlantsAdapte
         });
 
         plantsViewHolder.waterButton.setOnClickListener(v -> {
-
+            this.mainActivity.getMainPresenter().sendWateringRequest(plants.get(i).getMac());
         });
 
         plantsViewHolder.deleteButton.setEnabled(isOnline);
+        plantsViewHolder.waterButton.setEnabled(isOnline);
     }
 
     private void deletePlant(String id, int deletedIndex) {

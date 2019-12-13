@@ -45,18 +45,22 @@ public class MainPresenter implements HttpNotifier {
 
     @Override
     public void showSuccess(JSONObject response) {
-        if(response.toString().contains("deleted")) {
-            this.mainActivity.showToast("Pflanze erfolgreich gelöscht!");
+        if(response.toString().contains("already exists")) {
+            this.showToast("Gieß-Auftrag existiert bereits!");
+        } else if(response.toString().contains("Successfully added task for mac")) {
+            this.showToast("Gieß-Auftrag wurde hinterlegt!");
         } else {
-            try {
-                JSONArray plants = (JSONArray) response.get("payload");
-
-                this.updatePlants(Plant.createPlantListFromJSON(plants));
-            } catch(Exception e){
-                this.mainActivity.showToast(e.getMessage());
+            if (response.toString().contains("deleted")) {
+                this.mainActivity.showToast("Pflanze erfolgreich gelöscht!");
+            } else {
+                try {
+                    JSONArray plants = (JSONArray) response.get("payload");
+                    this.updatePlants(Plant.createPlantListFromJSON(plants));
+                } catch (Exception e) {
+                    this.mainActivity.showToast(e.getMessage());
+                }
             }
         }
-
     }
 
     public void updatePlants(List<Plant> newPlants) {
@@ -87,6 +91,10 @@ public class MainPresenter implements HttpNotifier {
 
     public void sendDeletePlantRequest(String id) {
         this.mainModel.sendDeletePlantRequest(id);
+    }
+
+    public void sendWateringRequest(String mac) {
+        this.mainModel.sendWateringRequest(mac);
     }
 
     public void showToast(String text) {
