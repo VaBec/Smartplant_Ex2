@@ -101,9 +101,10 @@ public class StartView extends AppCompatActivity implements StartPresenter.ILogi
     }
 
     @Override
-    public void startMainActivity(User user) {
+    public void startMainActivity(User user, boolean isOnlineLogin) {
         Intent intent = new Intent(this, MainView.class);
         intent.putExtra("user", user);
+        intent.putExtra("isonline", isOnlineLogin);
         startActivity(intent);
     }
 

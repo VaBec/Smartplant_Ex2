@@ -32,16 +32,17 @@ public class MainView extends AppCompatActivity implements MainPresenter.IMainAc
     private TabsPagerAdapter tabsPagerAdapter;
     private YourPlantsFragment yourPlantsFragment;
     private ManagePlantsFragment managePlantsFragment;
+    private boolean isOnline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.user = (User) this.getIntent().getExtras().get("user");
+        this.isOnline = this.getIntent().getBooleanExtra("isonline", false);
         setContentView(R.layout.activity_main);
-        mainPresenter = new MainPresenter(this, this.getApplicationContext(), this.user);
+        mainPresenter = new MainPresenter(this, this.user, isOnline);
         setupTabs();
         hideKeyBoard();
-        mainPresenter.startPollingTask(yourPlantsFragment, managePlantsFragment, this);
     }
 
     void hideKeyBoard() {
@@ -83,7 +84,6 @@ public class MainView extends AppCompatActivity implements MainPresenter.IMainAc
         this.yourPlantsFragment = new YourPlantsFragment();
         this.managePlantsFragment = new ManagePlantsFragment();
 
-        yourPlantsFragment.setMainView(this);
         managePlantsFragment.setMainView(this);
 
         tabsPagerAdapter.AddFragment(yourPlantsFragment, getString(R.string.tab_text_1) );
@@ -91,6 +91,8 @@ public class MainView extends AppCompatActivity implements MainPresenter.IMainAc
 
         viewPager.setAdapter(tabsPagerAdapter);
         tablayout.setupWithViewPager(viewPager);
+
+        mainPresenter.startPollingTask();
     }
 
     @Override
@@ -100,11 +102,14 @@ public class MainView extends AppCompatActivity implements MainPresenter.IMainAc
 
     @Override
     public void setPlants(List<Plant> plants) {
-        YourPlantsFragment yourPlantsFragment = (YourPlantsFragment) tabsPagerAdapter.getItem(0);
-        ManagePlantsFragment managePlantsFragment = (ManagePlantsFragment) tabsPagerAdapter.getItem(1);
+        // Android Framework is singlethreaded. Push task to event-queue.
+        runOnUiThread(() -> {
+            YourPlantsFragment yourPlantsFragment = (YourPlantsFragment) tabsPagerAdapter.getItem(0);
+            ManagePlantsFragment managePlantsFragment = (ManagePlantsFragment) tabsPagerAdapter.getItem(1);
 
-        yourPlantsFragment.addPlantsData(plants, this.user.getUserName());
-        managePlantsFragment.addPlantsData(plants, this.user, yourPlantsFragment);
+            yourPlantsFragment.addPlantsData(plants, this.user.getUserName(), isOnline);
+            managePlantsFragment.addPlantsData(plants, this.user, yourPlantsFragment, isOnline);
+        });
     }
 
     @Override

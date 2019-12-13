@@ -3,37 +3,36 @@ package de.htwg.smartplant.main;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 
-import org.json.JSONException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import de.htwg.smartplant.main.recycler.fragments.ManagePlantsFragment;
-import de.htwg.smartplant.main.recycler.fragments.YourPlantsFragment;
+import de.htwg.smartplant.Storage;
 import de.htwg.smartplant.rest.HttpNotifier;
 import de.htwg.smartplant.rest.jsonmodels.Plant;
 import de.htwg.smartplant.rest.jsonmodels.User;
 
 public class MainPresenter implements HttpNotifier {
 
+    private final User user;
     private IMainActivity mainActivity;
-    private Context context;
-    private User user;
     private MainModel mainModel;
 
+    private List<Plant> oldPlants = new ArrayList<>();
 
-    public MainPresenter(IMainActivity mainActivity, Context context, User user) {
-        this.user = user;
+    public MainPresenter(IMainActivity mainActivity, User user, boolean isOnline) {
         this.mainActivity = mainActivity;
-        this.context = context;
-        this.mainModel = new MainModel(this, user, mainActivity);
+        this.mainModel = new MainModel(this, user, mainActivity, isOnline);
+        this.user = user;
     }
 
     public void showException(Exception e) {
         mainActivity.showToast(e.getMessage());
     }
 
-    public void startPollingTask(YourPlantsFragment yourPlantsFragment, ManagePlantsFragment managePlantsFragment, IMainActivity mainActivity) {
+    public void startPollingTask() {
         this.mainModel.startPollingTask();
     }
 
@@ -44,24 +43,40 @@ public class MainPresenter implements HttpNotifier {
         this.mainActivity.showToast(errorMessage);
     }
 
-    /*
-    plants.remove(deletedIndex);
-
-    notifyItemRemoved(deletedIndex);
-                            yourPlantsAdapter.notifyItemRemoved(deletedIndex);
-    */
-
-
     @Override
     public void showSuccess(JSONObject response) {
-        String text;
-        try {
-            text = (String) response.get("payload");
-        } catch (JSONException e) {
-            text = e.getMessage();
+        if(response.toString().contains("deleted")) {
+            this.mainActivity.showToast("Pflanze erfolgreich gelöscht!");
+        } else {
+            try {
+                JSONArray plants = (JSONArray) response.get("payload");
+
+                this.updatePlants(Plant.createPlantListFromJSON(plants));
+            } catch(Exception e){
+                this.mainActivity.showToast(e.getMessage());
+            }
         }
 
-        this.mainActivity.showToast(text);
+    }
+
+    public void updatePlants(List<Plant> newPlants) {
+        boolean shouldUpdate = newPlants.size() != oldPlants.size();
+
+        if(!shouldUpdate) {
+            for(int i=0 ; i<oldPlants.size() ; i++) {
+                if(oldPlants.get(i).getWaterValue() != newPlants.get(i).getWaterValue()) {
+                    shouldUpdate = true;
+                    break;
+                }
+            }
+        }
+
+        if(shouldUpdate) {
+            mainActivity.setPlants(newPlants);
+            oldPlants = newPlants;
+
+            Storage.savePlantsToStorage(newPlants, this.mainActivity.getContext(), this.user.getUserName());
+        }
     }
 
     @Override public void showStart() { }
@@ -72,6 +87,10 @@ public class MainPresenter implements HttpNotifier {
 
     public void sendDeletePlantRequest(String id) {
         this.mainModel.sendDeletePlantRequest(id);
+    }
+
+    public void showToast(String text) {
+        this.mainActivity.showToast(text);
     }
 
     public interface IMainActivity{

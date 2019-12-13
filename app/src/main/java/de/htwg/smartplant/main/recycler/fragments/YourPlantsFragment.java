@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +13,6 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import de.htwg.smartplant.R;
-import de.htwg.smartplant.main.MainPresenter;
-import de.htwg.smartplant.main.MainView;
 import de.htwg.smartplant.main.recycler.adapters.YourPlantsAdapter;
 import de.htwg.smartplant.rest.jsonmodels.Plant;
 
@@ -21,7 +20,6 @@ public class YourPlantsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     YourPlantsAdapter yourPlantsAdapter;
-    private MainPresenter.IMainActivity mainView;
 
     public YourPlantsFragment() { }
 
@@ -30,6 +28,7 @@ public class YourPlantsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_plants, container, false);
         setUpRecycler(view);
+
         return view;
     }
 
@@ -39,17 +38,20 @@ public class YourPlantsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
-    public void addPlantsData(List<Plant> plants, String userName) {
-        yourPlantsAdapter = new YourPlantsAdapter(plants, userName);
-        recyclerView.setAdapter(yourPlantsAdapter);
-        yourPlantsAdapter.notifyDataSetChanged();
+    private boolean created = false;
+
+    public void addPlantsData(List<Plant> plants, String userName, boolean isOnline) {
+        if(!created) {
+            yourPlantsAdapter = new YourPlantsAdapter(plants, userName);
+            recyclerView.setAdapter(yourPlantsAdapter);
+            created = true;
+        } else {
+            yourPlantsAdapter.updatePlants(plants);
+            yourPlantsAdapter.notifyDataSetChanged();
+        }
     }
 
     public YourPlantsAdapter getYourPlantsAdapter() {
         return yourPlantsAdapter;
-    }
-
-    public void setMainView(MainPresenter.IMainActivity mainView) {
-        this.mainView = mainView;
     }
 }

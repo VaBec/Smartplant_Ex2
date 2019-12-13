@@ -20,7 +20,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="36dp"
-            android:max="1024" />
+            android:max="700" />
 
         <TextView
             android:id="@+id/macLabel"

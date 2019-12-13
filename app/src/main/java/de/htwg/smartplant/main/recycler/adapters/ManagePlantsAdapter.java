@@ -1,6 +1,5 @@
 package de.htwg.smartplant.main.recycler.adapters;
 
-import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -11,30 +10,20 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.loopj.android.http.AsyncHttpClient;
-
-import org.json.JSONObject;
-
 import java.util.List;
 
-import cz.msebera.android.httpclient.entity.StringEntity;
-import cz.msebera.android.httpclient.message.BasicHeader;
-import cz.msebera.android.httpclient.protocol.HTTP;
 import de.htwg.smartplant.R;
 import de.htwg.smartplant.Utils;
 import de.htwg.smartplant.main.MainPresenter;
 import de.htwg.smartplant.rest.jsonmodels.Plant;
-import de.htwg.smartplant.rest.HttpNotifier;
-import de.htwg.smartplant.rest.HttpManager;
 import de.htwg.smartplant.rest.jsonmodels.User;
-
-import static de.htwg.smartplant.rest.HttpManager.BASE_URL;
 
 public class ManagePlantsAdapter extends RecyclerView.Adapter<ManagePlantsAdapter.PlantManageViewHolder> {
 
     private final MainPresenter.IMainActivity mainActivity;
     private final YourPlantsAdapter yourPlantsAdapter;
     private final User user;
+    private final boolean isOnline;
 
     private List<Plant> plants;
 
@@ -57,11 +46,16 @@ public class ManagePlantsAdapter extends RecyclerView.Adapter<ManagePlantsAdapte
     }
 
     public ManagePlantsAdapter(List<Plant> plants, MainPresenter.IMainActivity mainActivity,
-                               User user, YourPlantsAdapter yourPlantsAdapter) {
+                               User user, YourPlantsAdapter yourPlantsAdapter, boolean isOnline) {
         this.plants = plants;
         this.mainActivity = mainActivity;
         this.user = user;
         this.yourPlantsAdapter = yourPlantsAdapter;
+        this.isOnline = isOnline;
+    }
+
+    public void updatePlants(List<Plant> plants) {
+        this.plants = plants;
     }
 
     @NonNull
@@ -92,6 +86,8 @@ public class ManagePlantsAdapter extends RecyclerView.Adapter<ManagePlantsAdapte
         plantsViewHolder.waterButton.setOnClickListener(v -> {
 
         });
+
+        plantsViewHolder.deleteButton.setEnabled(isOnline);
     }
 
     private void deletePlant(String id, int deletedIndex) {

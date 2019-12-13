@@ -14,6 +14,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
 
     public TabsPagerAdapter(FragmentManager fm) {
         super(fm);
+
     }
 
     @Nullable
@@ -32,8 +33,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
         return titles.size();
     }
 
-    public void AddFragment(Fragment fragment, String title)
-    {
+    public void AddFragment(Fragment fragment, String title) {
         fragments.add(fragment);
         titles.add(title);
     }

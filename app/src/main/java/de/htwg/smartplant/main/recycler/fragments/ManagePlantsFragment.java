@@ -2,8 +2,10 @@ package de.htwg.smartplant.main.recycler.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,10 +40,17 @@ public class ManagePlantsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
-    public void addPlantsData(List<Plant> plants, User user, YourPlantsFragment yourPlantsFragment) {
-        managePlantsAdapter = new ManagePlantsAdapter(plants, mainView, user, yourPlantsFragment.getYourPlantsAdapter());
-        recyclerView.setAdapter(managePlantsAdapter);
-        managePlantsAdapter.notifyDataSetChanged();
+    private boolean created = false;
+
+    public void addPlantsData(List<Plant> plants, User user, YourPlantsFragment yourPlantsFragment, boolean isOnline) {
+        if(!created) {
+            managePlantsAdapter = new ManagePlantsAdapter(plants, mainView, user, yourPlantsFragment.getYourPlantsAdapter(), isOnline);
+            recyclerView.setAdapter(managePlantsAdapter);
+            created = true;
+        } else {
+            managePlantsAdapter.updatePlants(plants);
+            managePlantsAdapter.notifyDataSetChanged();
+        }
     }
 
     public void setMainView(MainView mainView) {

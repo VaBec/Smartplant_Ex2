@@ -48,6 +48,10 @@ public class YourPlantsAdapter extends RecyclerView.Adapter<YourPlantsAdapter.Pl
         this.userName = userName;
     }
 
+    public void updatePlants(List<Plant> plants) {
+        this.plants = plants;
+    }
+
     @NonNull
     @Override
     public PlantsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -189,9 +193,9 @@ public class YourPlantsAdapter extends RecyclerView.Adapter<YourPlantsAdapter.Pl
 
     private void styleProgressBar(Integer waterValue, ProgressBar waterValueProgressBar) {
         String colorString;
-        if(waterValue >= 682) {
+        if(waterValue >= 450) {
             colorString = "#2389da";    // Water blue
-        } else if(waterValue >= 341) {
+        } else if(waterValue >= 250) {
             colorString = "#ffae42";    // Warning orange
         } else {
             colorString = "#ff5042";   // Error red
