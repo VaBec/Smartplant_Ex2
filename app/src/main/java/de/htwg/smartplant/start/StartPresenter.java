@@ -4,6 +4,8 @@ import android.content.Context;
 
 import org.json.JSONObject;
 
+import de.htwg.smartplant.Storage;
+import de.htwg.smartplant.rest.HttpManager;
 import de.htwg.smartplant.rest.jsonmodels.User;
 import de.htwg.smartplant.rest.HttpNotifier;
 
@@ -41,10 +43,25 @@ public class StartPresenter implements HttpNotifier {
         if(name.equals("") || password.equals("")) {
             view.showToast("Name und Passwort angeben.");
         } else {
-            this.user = new User(name, password);
-             this.startModel = new StartModel(this.user, this, context);
-             this.startModel.sendLoginRequest();
-             view.hideKeyboard();
+            if(HttpManager.isOnline(context)){
+                this.user = new User(name, password);
+                this.startModel = new StartModel(this.user, this, context);
+                this.startModel.sendLoginRequest();
+                view.hideKeyboard();
+            } else {
+                User user = Storage.getUserFromStorage(name, context);
+                if(user != null) {
+                    if (user.getPassWord().equals(password)) {
+                        view.showToast("Offline-Login erfolgreich!");
+                        Storage.saveUserToStorage(user, context);
+                        view.startMainActivity(user, false);
+                    } else {
+                        view.showToast("Falsches Passwort! (Offline)");
+                    }
+                } else {
+                    view.showToast("Offline-Login nicht möglich!");
+                }
+            }
         }
     }
 
@@ -83,7 +100,8 @@ public class StartPresenter implements HttpNotifier {
         view.showToast(toastMessage);
 
         if(this.startModel.isLogin()) {
-            view.startMainActivity(user);
+            Storage.saveUserToStorage(user, context);
+            view.startMainActivity(user, true);
         } else {
             view.showStandardRegisterButton();
             view.showLoginView();
@@ -115,6 +133,6 @@ public class StartPresenter implements HttpNotifier {
 
         void showToast(String text);
 
-        void startMainActivity(User user);
+        void startMainActivity(User user, boolean isOnlineLogin);
     }
 }

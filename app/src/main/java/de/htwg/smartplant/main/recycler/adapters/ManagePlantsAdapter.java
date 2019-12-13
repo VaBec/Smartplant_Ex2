@@ -1,6 +1,5 @@
 package de.htwg.smartplant.main.recycler.adapters;
 
-import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -11,39 +10,22 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.loopj.android.http.AsyncHttpClient;
-
-import org.json.JSONObject;
-
 import java.util.List;
 
-import cz.msebera.android.httpclient.entity.StringEntity;
-import cz.msebera.android.httpclient.message.BasicHeader;
-import cz.msebera.android.httpclient.protocol.HTTP;
 import de.htwg.smartplant.R;
 import de.htwg.smartplant.Utils;
+import de.htwg.smartplant.main.MainPresenter;
 import de.htwg.smartplant.rest.jsonmodels.Plant;
-import de.htwg.smartplant.rest.HttpNotifier;
-import de.htwg.smartplant.rest.HttpManager;
-
-import static de.htwg.smartplant.rest.HttpManager.BASE_URL;
+import de.htwg.smartplant.rest.jsonmodels.User;
 
 public class ManagePlantsAdapter extends RecyclerView.Adapter<ManagePlantsAdapter.PlantManageViewHolder> {
 
-    private final Activity activity;
+    private final MainPresenter.IMainActivity mainActivity;
     private final YourPlantsAdapter yourPlantsAdapter;
+    private final User user;
+    private final boolean isOnline;
 
-    private List<Plant> plantDetailObjectModels;
-    private String userName;
-    private String password;
-
-    public List<Plant> getPlants() {
-        return plantDetailObjectModels;
-    }
-
-    public void updateData(List<Plant> plants) {
-        this.plantDetailObjectModels = plants;
-    }
+    private List<Plant> plants;
 
     public static class PlantManageViewHolder extends RecyclerView.ViewHolder {
 
@@ -63,13 +45,17 @@ public class ManagePlantsAdapter extends RecyclerView.Adapter<ManagePlantsAdapte
         }
     }
 
-    public ManagePlantsAdapter(List<Plant> plantDetailObjectModels, Activity activity,
-                               String userName, String password, YourPlantsAdapter yourPlantsAdapter) {
-        this.plantDetailObjectModels = plantDetailObjectModels;
-        this.activity = activity;
-        this.userName = userName;
-        this.password = password;
+    public ManagePlantsAdapter(List<Plant> plants, MainPresenter.IMainActivity mainActivity,
+                               User user, YourPlantsAdapter yourPlantsAdapter, boolean isOnline) {
+        this.plants = plants;
+        this.mainActivity = mainActivity;
+        this.user = user;
         this.yourPlantsAdapter = yourPlantsAdapter;
+        this.isOnline = isOnline;
+    }
+
+    public void updatePlants(List<Plant> plants) {
+        this.plants = plants;
     }
 
     @NonNull
@@ -82,18 +68,16 @@ public class ManagePlantsAdapter extends RecyclerView.Adapter<ManagePlantsAdapte
 
     @Override
     public void onBindViewHolder(@NonNull PlantManageViewHolder plantsViewHolder, int i) {
-        int image = Utils.getImageOfPlant(plantDetailObjectModels.get(i).getPlantType());
+        int image = Utils.getImageOfPlant(plants.get(i).getPlantType());
 
-        plantsViewHolder.macLabel.setText("MAC: " + plantDetailObjectModels.get(i).getMac());
+        plantsViewHolder.macLabel.setText("MAC: " + plants.get(i).getMac());
         plantsViewHolder.plantImage.setImageResource(image);
 
         plantsViewHolder.deleteButton.setOnClickListener(v -> {
-            new AlertDialog.Builder(activity)
+            new AlertDialog.Builder(mainActivity.getActivity())
                     .setTitle("Löschen")
                     .setMessage("Wirklich löschen?")
-                    .setPositiveButton("Ja", (dialog, which) -> deletePlant(
-                            plantDetailObjectModels.get(i).getId(), userName, password, i
-                    ))
+                    .setPositiveButton("Ja", (dialog, which) -> deletePlant(plants.get(i).getId(), i))
                     .setNegativeButton("Nein", null)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
@@ -102,54 +86,20 @@ public class ManagePlantsAdapter extends RecyclerView.Adapter<ManagePlantsAdapte
         plantsViewHolder.waterButton.setOnClickListener(v -> {
 
         });
+
+        plantsViewHolder.deleteButton.setEnabled(isOnline);
     }
 
-    private void deletePlant(String id, String userName, String password, int deletedIndex) {
-        try {
-            JSONObject deletePlantJson = new JSONObject();
+    private void deletePlant(String id, int deletedIndex) {
+        this.mainActivity.getMainPresenter().sendDeletePlantRequest(id);
 
-            deletePlantJson.put("id", id);
-            deletePlantJson.put("username", userName);
-            deletePlantJson.put("password", password);
-
-            StringEntity entity = new StringEntity(deletePlantJson.toString());
-            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-            AsyncHttpClient client = new AsyncHttpClient();
-            client.setMaxRetriesAndTimeout(1, 5000);
-
-            String url = BASE_URL + "deleteplant";
-            client.delete(this.activity.getApplicationContext(), url,
-                    entity,"application/json", new HttpManager(new HttpNotifier() {
-                        @Override
-                        public void showRetry() {
-                            int db = 3;
-                        }
-
-                        @Override
-                        public void showFailure(String response) {
-                            int db = 3;
-                        }
-
-                        @Override
-                        public void showSuccess(JSONObject response) {
-                            plantDetailObjectModels.remove(deletedIndex);
-
-                            notifyItemRemoved(deletedIndex);
-                            yourPlantsAdapter.notifyItemRemoved(deletedIndex);
-                        }
-
-                        @Override
-                        public void showStart() {
-                            int db = 3;
-                        }
-                    }));
-        } catch(Exception e) {
-
-        }
+        plants.remove(deletedIndex);
+        notifyItemRemoved(deletedIndex);
+        yourPlantsAdapter.notifyItemRemoved(deletedIndex);
     }
 
     @Override
     public int getItemCount() {
-        return plantDetailObjectModels.size();
+        return plants.size();
     }
 }

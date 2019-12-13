@@ -1,15 +1,17 @@
 package de.htwg.smartplant.rest;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Map;
 
 import cz.msebera.android.httpclient.Header;
@@ -57,18 +59,49 @@ public class HttpManager extends JsonHttpResponseHandler {
         return client;
     }
 
-    public static void sendHtppRequest(RequestType requestType, JSONObject json, String url, HttpNotifier notifier, Context context) throws UnsupportedEncodingException {
-        createClient();
+    public static boolean sendHtppRequest(RequestType requestType, JSONObject json, String url, HttpNotifier notifier, Context context) throws UnsupportedEncodingException {
+        if(isOnline(context)) {
+            createClient();
 
-        StringEntity entity = new StringEntity(json.toString());
-        entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            StringEntity entity = new StringEntity(json.toString());
+            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
 
-        switch(requestType) {
-            case GET: client.get(context, url, entity,"application/json", new HttpManager(notifier)); break;
-            case POST: client.post(context, url, entity,"application/json", new HttpManager(notifier)); break;
-            case PUT: client.put(context, url, entity,"application/json", new HttpManager(notifier)); break;
-            case DELETE: client.delete(context, url, entity,"application/json", new HttpManager(notifier)); break;
+            switch (requestType) {
+                case GET:
+                    client.get(context, url, entity, "application/json", new HttpManager(notifier));
+                    break;
+                case POST:
+                    client.post(context, url, entity, "application/json", new HttpManager(notifier));
+                    break;
+                case PUT:
+                    client.put(context, url, entity, "application/json", new HttpManager(notifier));
+                    break;
+                case DELETE:
+                    client.delete(context, url, entity, "application/json", new HttpManager(notifier));
+                    break;
+            }
+
+            return true;
         }
+
+        return false;
+    }
+
+    public static void requestPlants(String userName, Context context, HttpNotifier notifier) {
+        Map<String,String> params = new HashMap<>();
+        params.put("userName", userName);
+        RequestParams reqParams = new RequestParams(params);
+
+        HttpManager.createClient().
+                get(context, HttpManager.RequestUrl.PLANTSFROMUSER.create(), reqParams, new HttpManager(notifier));
+    }
+
+    public static boolean isOnline(Context context) {
+        ConnectivityManager cm = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
     public HttpManager(HttpNotifier notifier) {

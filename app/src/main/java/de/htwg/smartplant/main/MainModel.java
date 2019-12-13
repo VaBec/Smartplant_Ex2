@@ -1,38 +1,34 @@
 package de.htwg.smartplant.main;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import de.htwg.smartplant.Utils;
+import de.htwg.smartplant.Storage;
 import de.htwg.smartplant.rest.HttpManager;
-import de.htwg.smartplant.rest.HttpNotifier;
 import de.htwg.smartplant.rest.jsonmodels.Plant;
 import de.htwg.smartplant.rest.jsonmodels.User;
 
 import static de.htwg.smartplant.rest.HttpManager.RequestType.DELETE;
 
-public class MainModel implements HttpNotifier {
+public class MainModel {
 
-    private final int SLEEP_TIME = 250;
-    private List<Plant> oldPlants = new ArrayList<>();
+    private final int SLEEP_TIME = 5000;
 
     private final User user;
     private final MainPresenter.IMainActivity mainActivity;
     private final MainPresenter mainPresenter;
+    private final boolean isOnline;
     private Thread pollingThread;
 
-    public MainModel(MainPresenter mainPresenter, User user, MainPresenter.IMainActivity mainActivity) {
+    public MainModel(MainPresenter mainPresenter, User user, MainPresenter.IMainActivity mainActivity, boolean isOnline) {
         this.mainPresenter = mainPresenter;
         this.mainActivity = mainActivity;
         this.user = user;
+        this.isOnline = isOnline;
     }
 
     public void sendDeletePlantRequest(String plantId) {
@@ -43,7 +39,7 @@ public class MainModel implements HttpNotifier {
             deleteUserJson.put("username", user.getUserName());
             deleteUserJson.put("password", user.getPassWord());
 
-            HttpManager.sendHtppRequest(DELETE, deleteUserJson, HttpManager.RequestUrl.LOGIN.create(), mainPresenter, this.mainActivity.getContext());
+            HttpManager.sendHtppRequest(DELETE, deleteUserJson, HttpManager.RequestUrl.DELETEPLANT.create(), mainPresenter, this.mainActivity.getContext());
         } catch(Exception e) {
             mainPresenter.showException(e);
         }
@@ -54,8 +50,21 @@ public class MainModel implements HttpNotifier {
             while (true) {
                 try {
                     Handler refresh = new Handler(Looper.getMainLooper());
-                    refresh.post(() -> requestPlants());
-                    Thread.sleep(SLEEP_TIME);
+                    if (isOnline) {
+                        refresh.post(this::requestPlants);
+                        Thread.sleep(SLEEP_TIME);
+                    } else {
+                        // Fire dummy HTTP-Response, since user is offline.
+                        Thread.sleep(SLEEP_TIME);
+                        List<Plant> plants = Storage.getPlantsFromStorage(this.user.getUserName(), this.mainActivity.getContext());
+                        if (plants.size() > 0) {
+                            this.mainPresenter.updatePlants(plants);
+                        } else {
+                            this.mainPresenter.showToast("Du hast noch keine Pflanzen!");
+                        }
+
+                        break;
+                    }
                 } catch (InterruptedException e) {
                     return;
                 }
@@ -72,30 +81,6 @@ public class MainModel implements HttpNotifier {
     }
 
     private void requestPlants() {
-        Utils.requestPlants(this.user.getUserName(), this.mainActivity.getContext(), this);
+        HttpManager.requestPlants(this.user.getUserName(), this.mainActivity.getContext(), mainPresenter);
     }
-
-    @Override public void showRetry() { }
-
-    @Override
-    public void showFailure(String errorResponse) {
-        this.mainActivity.showToast(errorResponse);
-    }
-
-    @Override
-    public void showSuccess(JSONObject response) {
-        try {
-            JSONArray plants = (JSONArray) response.get("payload");
-            List<Plant> newPlants = Plant.createPlantListFromJSON(plants);
-
-            if(newPlants.size() != oldPlants.size()) {
-                mainActivity.setPlants(newPlants);
-                oldPlants = newPlants;
-            }
-        } catch(Exception e){
-            this.mainActivity.showToast(e.getMessage());
-        }
-    }
-
-    @Override public void showStart(){}
 }
