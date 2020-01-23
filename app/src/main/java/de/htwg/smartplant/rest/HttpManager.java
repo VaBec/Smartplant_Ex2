@@ -26,7 +26,7 @@ public class HttpManager extends JsonHttpResponseHandler {
     }
 
     public enum RequestUrl {
-        LOGIN, REGISTER, PLANTSFROMUSER, DELETEPLANT;
+        LOGIN, REGISTER, PLANTSFROMUSER, DELETEPLANT, ADD;
 
         private RequestUrl requestUrl;
 
@@ -35,6 +35,7 @@ public class HttpManager extends JsonHttpResponseHandler {
             REGISTER.requestUrl = REGISTER;
             PLANTSFROMUSER.requestUrl = PLANTSFROMUSER;
             DELETEPLANT.requestUrl = DELETEPLANT;
+            ADD.requestUrl = ADD;
         }
 
         public String create() {
