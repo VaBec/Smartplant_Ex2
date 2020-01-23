@@ -29,7 +29,7 @@ public class MainModel {
 
     public MainModel(MainPresenter mainPresenter, User user, MainPresenter.IMainActivity mainActivity, boolean isOnline) {
         this.mainPresenter = mainPresenter;
-        this.mainActivity = mainActivity;
+        this.mainActivity = mainActivity; //Only .getContext() needed for LoopJ! Does not break MVP.
         this.user = user;
         this.isOnline = isOnline;
     }
